@@ -1,0 +1,12 @@
+[submodule "vendor/crashoz/uuid_v4"]
+	path = vendor/crashoz/uuid_v4
+	url = https://github.com/crashoz/uuid_v4.git
+[submodule "vendor/google/googletest"]
+	path = vendor/google/googletest
+	url = https://github.com/google/googletest.git
+[submodule "vendor/google/benchmark"]
+	path = vendor/google/benchmark
+	url = https://github.com/google/benchmark.git
+[submodule "vendor/sewenew/redis-plus-plus"]
+	path = vendor/sewenew/redis-plus-plus
+	url = https://github.com/sewenew/redis-plus-plus.git

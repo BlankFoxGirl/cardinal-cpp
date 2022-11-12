@@ -1,0 +1,39 @@
+version: '3.9'
+services:
+  compile:
+    build: ./CompileLinux
+    volumes:
+      - ../:/app
+  gameserver:
+    build: ./GameServer
+    ports:
+      - '8000:5000'
+    volumes:
+      - ../build/bin:/app
+    depends_on:
+      compile:
+        condition: service_completed_successfully
+      redis:
+        condition: service_started
+      # - worker
+    links:
+      - redis
+  worker:
+    build: ./Worker
+    volumes:
+      - ../build/bin:/app
+    depends_on:
+      compile:
+        condition: service_completed_successfully
+      redis:
+        condition: service_started
+    links:
+      - redis
+  redis:
+    build: ./Redis
+    depends_on:
+      compile:
+        condition: service_completed_successfully
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel verbose
