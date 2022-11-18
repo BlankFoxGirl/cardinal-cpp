@@ -1,5 +1,7 @@
 #include "AbstractEntity.h"
 #include <string>
+#ifndef CONFENT_H
+#define CONFENT_H
 using namespace std;
 
 namespace Cardinal {
@@ -20,3 +22,4 @@ namespace Cardinal {
         };
     }
 }
+#endif

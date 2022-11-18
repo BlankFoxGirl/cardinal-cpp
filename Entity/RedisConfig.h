@@ -1,5 +1,7 @@
 #include "AbstractEntity.h"
 #include <string>
+#ifndef REDISENT_H
+#define REDISENT_H
 using namespace std;
 
 namespace Cardinal {
@@ -11,3 +13,4 @@ namespace Cardinal {
         };
     }
 }
+#endif

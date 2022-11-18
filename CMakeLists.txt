@@ -9,9 +9,20 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+file(GLOB_RECURSE SOURCES
+    Entity/*.h
+    Entity/*.cpp
+    Service/*.h
+    Service/*.cpp
+    Exception/*.h
+    Exception/*.cpp
+    cardinal.cpp
+)
+
+
 project(Cardinal)
 
-add_executable(myexample cardinal.cpp)
+add_executable(myexample ${SOURCES})
 
 target_link_libraries (myexample)
 # <------------ add hiredis dependency here --------------->

@@ -9,12 +9,28 @@ fi
 
 if [[ "$1" = "up" ]]
 then
-    $COMPOSE up
+    $COMPOSE $@
 elif [[ "$1" = "down" ]]
 then
     $COMPOSE down
 elif [[ "$1" = "build" ]]
 then
+    if [[ ! -f "vendor/crashoz/uuid_v4/build/Makefile" ]]
+    then
+        cd vendor/crashoz/uuid_v4/
+        mkdir build
+        cd build
+        cmake ..
+        make
+        cd ../../../../
+    fi
+    if [[ ! -f "vendor/sewenew/redis-plus-plus/build/Makefile" ]]
+    then
+        cd vendor/sewenew/redis-plus-plus/build && cmake .. && make
+        cd ../../../../
+    fi
+    cd vendor/sewenew/redis-plus-plus/build && make install
+    cd ../../../../
     rm -rf build/* && cd build && cmake .. && make
 elif [[ "$1" = "run" ]]
 then

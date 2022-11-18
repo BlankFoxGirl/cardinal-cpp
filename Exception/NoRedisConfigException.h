@@ -1,4 +1,6 @@
-// #include "AbstractException.h"
+#include "AbstractException.h"
+#ifndef NRCE_H
+#define NRCE_H
 #include <exception>
 using namespace std;
 
@@ -10,3 +12,4 @@ namespace Cardinal {
         };
     }
 }
+#endif
