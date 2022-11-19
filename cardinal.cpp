@@ -24,7 +24,10 @@ namespace ttest {
         static Cardinal::Service::RedisClient client;
     };
 }
+// Config;
+Cardinal::Event::eventObject Cardinal::Event::EventMap::events = {};
 Cardinal::Service::RedisClient ttest::Test::client = Cardinal::Service::RedisClient("localhost", "6379");
+
 int main() {
     Cardinal::Entity::Event entity;
 

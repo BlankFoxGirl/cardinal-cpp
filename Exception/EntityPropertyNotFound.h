@@ -1,5 +1,7 @@
 #include "AbstractException.h"
 
+#ifndef EPNFE_H
+#define EPNFE_H
 using namespace std;
 
 namespace Cardinal {
@@ -10,3 +12,4 @@ namespace Cardinal {
         };
     }
 }
+#endif

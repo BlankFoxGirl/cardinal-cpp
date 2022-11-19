@@ -5,7 +5,9 @@ services:
     volumes:
       - ../:/app
   gameserver:
-    build: ./GameServer
+    build: 
+      context: ../
+      dockerfile: ./Docker/GameServer/Dockerfile
     ports:
       - '8000:5000'
     volumes:
@@ -19,7 +21,9 @@ services:
     links:
       - redis
   worker:
-    build: ./Worker
+    build: 
+      context: ../
+      dockerfile: ./Docker/Worker/Dockerfile
     volumes:
       - ../build/bin:/app
     depends_on:

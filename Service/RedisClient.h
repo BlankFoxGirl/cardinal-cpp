@@ -3,41 +3,27 @@
 #include "../Event/Events.h"
 #include "../Exception/Exceptions.h"
 
-using namespace Cardinal::Exception;
+#ifndef RC_H
+#define RC_H
 
 namespace Cardinal {
     namespace Service {
         class RedisClient {
             public:
-            RedisClient() {
-                throw Exception::NoRedisConfigException();
-            }
-            RedisClient(std::string Hostname, std::string Port, std::string Protocol = "tcp") {
-                this->redis = sw::redis::Redis(Protocol + "://" + Hostname + ":" + Port);
-                this->subscriber = this->redis.subscriber();
-            }
+            RedisClient();
+            RedisClient(std::string Hostname, std::string Port, std::string Protocol = "tcp");
 
-            void set(string Key, string Val) {
-                this->redis.set(Key, Val);
-            }
-            sw::redis::OptionalString set(string Key) {
-                return (sw::redis::OptionalString)this->redis.get(Key);
-            }
-            void subscribe(string Channel) {
-                this->channel = Channel;
-                this->subscriber.subscribe(Channel);
-                this->subscriber.on_message(Cardinal::Event::EventMap::Invoke);
-            }
-            void consume() {
-                return this->subscriber.consume();
-            }
-            void publish(string message) {
-                this->redis.publish(this->channel, message);
-            }
+            void set(std::string Key, std::string Val);
+            sw::redis::OptionalString set(std::string Key);
+            void subscribe(std::string Channel);
+            void consume();
+            void publish(std::string message);
+
             private:
                 sw::redis::Redis redis = sw::redis::Redis("tcp://localhost");
                 sw::redis::Subscriber subscriber = this->redis.subscriber();
-                string channel;
+                std::string channel;
         };
     }
 }
+#endif

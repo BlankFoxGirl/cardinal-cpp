@@ -1,6 +1,8 @@
-using namespace std;
 #include <exception>
 #include <cstring>
+#ifndef AE_H
+#define AE_H
+using namespace std;
 
 namespace Cardinal {
     namespace Exception {
@@ -21,3 +23,4 @@ namespace Cardinal {
         };
     }
 }
+#endif

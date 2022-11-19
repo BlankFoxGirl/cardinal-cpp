@@ -1,4 +1,7 @@
 #include <exception>
+#include "AbstractException.h"
+#ifndef IOMEE_H
+#define IOMEE_H
 using namespace std;
 
 namespace Cardinal {
@@ -9,3 +12,4 @@ namespace Cardinal {
         };
     }
 }
+#endif

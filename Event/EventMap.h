@@ -1,7 +1,9 @@
 #include <string>
 #include <map>
 #include <iostream>
-
+#include "../Exception/InvalidOrMissingEvent.h"
+#ifndef EventMap_H
+#define EventMap_H
 using namespace std;
 
 namespace Cardinal::Event {
@@ -27,4 +29,4 @@ namespace Cardinal::Event {
     };
 }
 
-Cardinal::Event::eventObject Cardinal::Event::EventMap::events = {};
+#endif
