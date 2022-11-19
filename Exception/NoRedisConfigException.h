@@ -1,4 +1,3 @@
-// #include "AbstractException.h"
 #include <exception>
 using namespace std;
 

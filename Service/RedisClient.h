@@ -1,5 +1,7 @@
 #include <sw/redis++/redis++.h>
 #include <string>
+#include "../Event/Events.h"
+#include "../Exception/Exceptions.h"
 
 using namespace Cardinal::Exception;
 
@@ -24,6 +26,7 @@ namespace Cardinal {
             void subscribe(string Channel) {
                 this->channel = Channel;
                 this->subscriber.subscribe(Channel);
+                this->subscriber.on_message(Cardinal::Event::EventMap::Invoke);
             }
             void consume() {
                 return this->subscriber.consume();
