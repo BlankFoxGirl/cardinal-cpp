@@ -1,5 +1,7 @@
 #include <string>
 #include <iostream>
+#ifndef AbstractEvent_H
+#define AbstractEvent_H
 using namespace std;
 
 namespace Cardinal::Event {
@@ -13,3 +15,4 @@ namespace Cardinal::Event {
             }
     };
 }
+#endif
