@@ -1,4 +1,6 @@
 #include <exception>
+#ifndef ANFE_H
+#define ANFE_H
 using namespace std;
 
 namespace Cardinal {
@@ -9,3 +11,4 @@ namespace Cardinal {
         };
     }
 }
+#endif

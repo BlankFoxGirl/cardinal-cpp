@@ -1,48 +1,31 @@
 #include <string>
 #include "../Service/ObjectIdentityService.h"
-
+#ifndef ABSTE_H
+#define ABSTE_H
 using namespace std;
 
 namespace Cardinal {
     namespace Entity {
         class AbstractEntity {
             public:
-            AbstractEntity(){
-                if (!this->hasUUID()) {
-                    Cardinal::Service::ObjectIdentityService identity;
-                    this->setUUID(identity.generateUUID());
-                }
-            }
+            AbstractEntity();
 
-            void setPoly(std::string polyValue) {
-                this->poly = polyValue;
-            }
+            void setPoly(std::string polyValue);
 
-            bool hasPoly() {
-                return (this->poly != "");
-            }
+            bool hasPoly();
 
-            bool hasUUID() {
-                return (this->UUID != "");
-            }
+            bool hasUUID();
 
-            std::string getUUID() {
-                return this->UUID;
-            }
+            std::string getUUID();
 
-            std::string getPoly() {
-                return this->poly;
-            }
+            std::string getPoly();
 
             private:
             std::string poly = "";
             std::string UUID = "";
 
-            std::string setUUID(std::string UUID) {
-                this->UUID = UUID;
-
-                return this->getUUID();
-            }
+            std::string setUUID(std::string UUID);
         };
     }
 }
+#endif
