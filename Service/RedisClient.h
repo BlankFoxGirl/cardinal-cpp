@@ -1,5 +1,7 @@
 #include <sw/redis++/redis++.h>
 #include <string>
+#include "../Event/Events.h"
+#include "../Exception/Exceptions.h"
 
 #ifndef RC_H
 #define RC_H

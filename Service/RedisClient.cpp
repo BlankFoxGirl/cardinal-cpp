@@ -25,6 +25,7 @@ sw::redis::OptionalString RedisClient::set(string Key) {
 void RedisClient::subscribe(string Channel) {
     this->channel = Channel;
     this->subscriber.subscribe(Channel);
+    this->subscriber.on_message(Cardinal::Event::EventMap::Invoke);
 }
 void RedisClient::consume() {
     return this->subscriber.consume();
