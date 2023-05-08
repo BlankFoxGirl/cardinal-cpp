@@ -5,6 +5,48 @@
 #include <unistd.h>
 
 using namespace std;
+namespace Cardinal {
+    class Core {
+            Core() {
+                this->Init();
+            }
+        private:
+            bool Active = false;
+            bool dryRun = false;
+            bool is_listener = false;
+
+            void Init() {
+                if (this->is_listener) {
+                    this->StartListner();
+                } else {
+                    this->StartWorker();
+                }
+
+                this->StartLoop();
+            }
+
+            void StartWorker() {}
+            void StartListner() {}
+
+            void StartLoop() {
+                while (this->Active && !this->dryRun) {
+                    this->Loop();
+                }
+            }
+
+            void Loop() {
+                if (this->is_listener) {
+                    this->ListenerLoop();
+                } else {
+                    this->WorkerLoop();
+                }
+            }
+
+            void ListenerLoop() {}
+            void WorkerLoop() {}
+    };
+}
+
 namespace ttest {
     class Test {
         public:
@@ -26,12 +68,18 @@ namespace ttest {
 }
 // Config;
 Cardinal::Event::eventObject Cardinal::Event::EventMap::events = {};
-Cardinal::Service::RedisClient ttest::Test::client = Cardinal::Service::RedisClient("localhost", "6379");
+Cardinal::Service::RedisClient ttest::Test::client = Cardinal::Service::RedisClient();
 
 int main() {
     Cardinal::Entity::Event entity;
+    try {
+        ttest::Test::client.Connect("redis", "6379");
+    } catch (sw::redis::IoError& e) {
+        cout << "Unable to connect to redis server" << endl;
+        exit(1);
+    }
 
-    cout << entity.getUUID() << endl;
+    cout << "Starting Cardinal Core" << endl;
     try {
         ttest::Test t;
         // t.test2();
@@ -44,9 +92,14 @@ int main() {
     } catch (std::exception& e) {
         cout << e.what() << endl;
     }
-    while (true) {
-        usleep(1);
-        ttest::Test::client.consume();
+
+    // Is not a listener, no TCP Connections required.
+    std::string is_listener = std::getenv("IS_LISTENER");
+    if (is_listener.compare("FALSE") == true) {
+        while (true) {
+            usleep(1);
+            ttest::Test::client.consume();
+        }
     }
 }
 

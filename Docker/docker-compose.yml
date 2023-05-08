@@ -12,6 +12,13 @@ services:
       - '8000:5000'
     volumes:
       - ../build/bin:/app
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      IDENTIFIER: "GameServer"
+      IS_LISTENER: "true"
+      GS_POST: 7777
+    restart: on-failure
     depends_on:
       compile:
         condition: service_completed_successfully
@@ -26,6 +33,12 @@ services:
       dockerfile: ./Docker/Worker/Dockerfile
     volumes:
       - ../build/bin:/app
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      IDENTIFIER: "Worker"
+      IS_LISTENER: "false"
+    restart: on-failure
     depends_on:
       compile:
         condition: service_completed_successfully

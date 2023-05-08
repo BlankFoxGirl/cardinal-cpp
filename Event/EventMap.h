@@ -2,6 +2,7 @@
 #include <map>
 #include <iostream>
 #include "../Exception/InvalidOrMissingEvent.h"
+#include "Events.h"
 #ifndef EventMap_H
 #define EventMap_H
 using namespace std;

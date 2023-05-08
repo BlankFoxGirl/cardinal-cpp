@@ -2,16 +2,21 @@
 #include "RedisClient.h"
 #include <string>
 #include "../Exception/NoRedisConfigException.h"
+#include "../Entity/Event.h"
+#include "../Event/EventMap.h"
 
 using namespace Cardinal::Exception;
 using namespace std;
 
 using namespace Cardinal::Service;
 
-RedisClient::RedisClient() {
-    throw Exception::NoRedisConfigException();
-}
+RedisClient::RedisClient() {}
 RedisClient::RedisClient(std::string Hostname, std::string Port, std::string Protocol) {
+    this->redis = sw::redis::Redis(Protocol + "://" + Hostname + ":" + Port);
+    this->subscriber = this->redis.subscriber();
+}
+
+void RedisClient::Connect(std::string Hostname, std::string Port, std::string Protocol) {
     this->redis = sw::redis::Redis(Protocol + "://" + Hostname + ":" + Port);
     this->subscriber = this->redis.subscriber();
 }
@@ -27,6 +32,11 @@ void RedisClient::subscribe(string Channel) {
     this->subscriber.subscribe(Channel);
     this->subscriber.on_message(Cardinal::Event::EventMap::Invoke);
 }
+
+void RedisClient::write(Cardinal::Entity::Event Event) {
+    this->redis.publish(Event.key, Event.payload);
+}
+
 void RedisClient::consume() {
     return this->subscriber.consume();
 }

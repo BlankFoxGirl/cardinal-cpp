@@ -1,6 +1,6 @@
 #include <sw/redis++/redis++.h>
 #include <string>
-#include "../Event/Events.h"
+#include "../Entity/Event.h"
 #include "../Exception/Exceptions.h"
 
 #ifndef RC_H
@@ -12,12 +12,14 @@ namespace Cardinal {
             public:
             RedisClient();
             RedisClient(std::string Hostname, std::string Port, std::string Protocol = "tcp");
+            void Connect(std::string Hostname, std::string Port, std::string Protocol = "tcp");
 
             void set(std::string Key, std::string Val);
             sw::redis::OptionalString set(std::string Key);
             void subscribe(std::string Channel);
             void consume();
             void publish(std::string message);
+            void write(Cardinal::Entity::Event Event);
 
             private:
                 sw::redis::Redis redis = sw::redis::Redis("tcp://localhost");
