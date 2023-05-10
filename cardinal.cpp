@@ -3,6 +3,8 @@
 #include "Service/Services.h"
 #include "Event/Events.h"
 #include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 using namespace std;
 namespace Cardinal {
@@ -50,6 +52,9 @@ namespace Cardinal {
 namespace ttest {
     class Test {
         public:
+        // static void Connect() {
+        //     Test::client = Cardinal::Service::RedisClient("localhost", "6379");
+        // }
         void test() {
             throw Cardinal::Exception::AccountNotFound();
         }
@@ -68,12 +73,13 @@ namespace ttest {
 }
 // Config;
 Cardinal::Event::eventObject Cardinal::Event::EventMap::events = {};
-Cardinal::Service::RedisClient ttest::Test::client = Cardinal::Service::RedisClient();
+Cardinal::Service::RedisClient ttest::Test::client = Cardinal::Service::RedisClient("localhost", "6379");
 
 int main() {
     Cardinal::Entity::Event entity;
     try {
-        ttest::Test::client.Connect("redis", "6379");
+        // ttest::Test::Connect();
+        // ttest::Test::client.Connect("redis", "6379");
     } catch (sw::redis::IoError& e) {
         cout << "Unable to connect to redis server" << endl;
         exit(1);
@@ -82,9 +88,9 @@ int main() {
     cout << "Starting Cardinal Core" << endl;
     try {
         ttest::Test t;
-        // t.test2();
-        t.test3_setup();
         t.test2();
+        // t.test3_setup();
+        // t.test2();
     } catch (Cardinal::Exception::AccountNotFound& e) {
         cout << e.what() << endl;
     } catch (Cardinal::Exception::InvalidOrMissingEvent& e) {
@@ -94,7 +100,14 @@ int main() {
     }
 
     // Is not a listener, no TCP Connections required.
-    std::string is_listener = std::getenv("IS_LISTENER");
+    std::string is_listener = "FALSE";
+    try {
+        is_listener = std::getenv("IS_LISTENER") ? std::getenv("IS_LISTENER") : "FALSE"; // Causing segmentation fault.
+        // Do nothing.
+    } catch (std::exception& e) {
+        cout << e.what() << endl;
+    }
+
     if (is_listener.compare("FALSE") == true) {
         while (true) {
             usleep(1);
