@@ -1,65 +1,38 @@
 #include <string>
 #include "../Exception/Exceptions.h"
+#ifndef MS_H
+#define MS_H
 
 using namespace std;
 
 namespace Cardinal {
     namespace Service {
         class MessageService {
-            MessageService () {}
-            MessageService (string raw) {
-                this->raw = raw;
-            }
+            MessageService ();
+            MessageService (string raw);
 
-            MessageService (string event, string message) {
-                this->event = event;
-                this->message = message;
-            }
+            MessageService (string event, string message);
 
-            string getEvent () {
-                return this->event;
-            }
+            string getEvent ();
 
-            void setEvent (string event) {
-                this->event = event;
-            }
+            void setEvent (string event);
 
-            void setMessage (string message) {
-                this->message = message;
-            }
+            void setMessage (string message);
 
-            void appendMessage(string message) {
-                this->message += message;
-            }
+            void appendMessage(string message);
 
-            string getRaw() {
-                if (this->raw.empty()) {
-                    this->Compile();
-                }
-                return this->raw;
-            }
+            string getRaw();
 
-            tuple<string,string> Decode() {
-                if (this->event.empty() || this->message.empty()) {
-                    throw Cardinal::Exception::InvalidMessage();
-                }
-
-                return make_tuple(this->event, this->message);
-            }
+            tuple<string,string> Decode();
 
             private:
                 string raw = "";
                 string event = "";
                 string message = "";
 
-                void Compile () {
-                    if (this->event.empty() || this->message.empty()) {
-                        throw Cardinal::Exception::InvalidMessage();
-                    }
-
-                    string compiledMessage = this->event + "|" + this->message;
-                    this->raw = compiledMessage;
-                }
+                void Compile ();
         };
     };
 }
+
+#endif
