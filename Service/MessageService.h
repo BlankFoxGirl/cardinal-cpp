@@ -8,22 +8,23 @@ using namespace std;
 namespace Cardinal {
     namespace Service {
         class MessageService {
-            MessageService ();
-            MessageService (string raw);
+            public:
+                MessageService ();
+                MessageService (string raw);
 
-            MessageService (string event, string message);
+                MessageService (string event, string message);
 
-            string getEvent ();
+                string getEvent ();
 
-            void setEvent (string event);
+                void setEvent (string event);
 
-            void setMessage (string message);
+                void setMessage (string message);
 
-            void appendMessage(string message);
+                void appendMessage(string message);
 
-            string getRaw();
+                string getRaw();
 
-            tuple<string,string> Decode();
+                tuple<string,string> Decode();
 
             private:
                 string raw = "";
@@ -31,6 +32,7 @@ namespace Cardinal {
                 string message = "";
 
                 void Compile ();
+                void Decompile();
         };
     };
 }
