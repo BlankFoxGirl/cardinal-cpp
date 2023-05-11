@@ -11,39 +11,47 @@ using namespace std;
 using namespace Cardinal::Service;
 
 RedisClient::RedisClient() {}
-RedisClient::RedisClient(std::string Hostname, std::string Port, std::string Protocol) {
+
+RedisClient::RedisClient(std::string Hostname, std::string Port, std::string Protocol)
+{
     this->redis = sw::redis::Redis(Protocol + "://" + Hostname + ":" + Port);
     this->subscriber = this->redis.subscriber();
 }
 
-void RedisClient::Connect(std::string Hostname, std::string Port, std::string Protocol) {
+void RedisClient::Connect(std::string Hostname, std::string Port, std::string Protocol)
+{
     this->redis = sw::redis::Redis(Protocol + "://" + Hostname + ":" + Port);
     this->subscriber = this->redis.subscriber();
 }
 
-void RedisClient::set(string Key, string Val) {
+void RedisClient::set(string Key, string Val)
+{
     this->redis.set(Key, Val);
 }
-sw::redis::OptionalString RedisClient::set(string Key) {
+
+sw::redis::OptionalString RedisClient::set(string Key)
+{
     return (sw::redis::OptionalString)this->redis.get(Key);
 }
-void RedisClient::subscribe(string Channel) {
+
+void RedisClient::subscribe(string Channel)
+{
     this->channel = Channel;
     this->subscriber.subscribe(Channel);
     this->subscriber.on_message(Cardinal::Event::EventMap::Invoke);
 }
 
-void RedisClient::write(Cardinal::Entity::Event Event) {
+void RedisClient::write(Cardinal::Entity::Event Event)
+{
     this->redis.publish(Event.key, Event.payload);
 }
 
-void RedisClient::consume() {
+void RedisClient::consume()
+{
     return this->subscriber.consume();
 }
-void RedisClient::publish(string message) {
+
+void RedisClient::publish(string message)
+{
     this->redis.publish(this->channel, message);
 }
-
-// sw::redis::Redis RedisClient::redis = sw::redis::Redis("tcp://localhost");
-// sw::redis::Subscriber RedisClient::subscriber = this->redis.subscriber();
-// string RedisClient::channel;
