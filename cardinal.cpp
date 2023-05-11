@@ -65,7 +65,7 @@ namespace ttest {
         }
         void test3_setup() {
             Cardinal::Event::TestEvent *t = new Cardinal::Event::TestEvent();
-            Cardinal::Event::EventMap::Register("test", t);
+            Cardinal::Event::EventMap::Register("TestEvent", t);
         }
 
         static Cardinal::Service::RedisClient client;
@@ -86,8 +86,8 @@ int main() {
     }
 
     cout << "Starting Cardinal Core" << endl;
+    ttest::Test t;
     try {
-        ttest::Test t;
         t.test2();
         // t.test3_setup();
         // t.test2();
@@ -108,7 +108,8 @@ int main() {
         cout << e.what() << endl;
     }
 
-    if (is_listener.compare("FALSE") == true) {
+    if (is_listener.compare("FALSE") == 0) {
+        t.test3_setup();
         while (true) {
             usleep(1);
             ttest::Test::client.consume();
