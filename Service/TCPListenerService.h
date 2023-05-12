@@ -31,7 +31,9 @@ namespace Cardinal::Service
         {
             TCPListenerService t = TCPListenerService();
             t.LocalConnection(args);
+            return args;
         }
+
         static void sig_handler(int signo)
         {
             /* signal handler */
