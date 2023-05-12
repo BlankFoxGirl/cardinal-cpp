@@ -77,15 +77,16 @@ Cardinal::Service::RedisClient ttest::Test::client = Cardinal::Service::RedisCli
 
 int main() {
     Cardinal::Entity::Event entity;
+    Cardinal::Service::LogService Logger = Cardinal::Service::LogService();
     try {
         // ttest::Test::Connect();
         // ttest::Test::client.Connect("redis", "6379");
     } catch (sw::redis::IoError& e) {
-        cout << "Unable to connect to redis server" << endl;
+        Logger.Log("Unable to connect to redis server", e.what(), Cardinal::Service::LOG_LEVEL::Error);
         exit(1);
     }
 
-    cout << "Starting Cardinal Core" << endl;
+    Logger.Log("Starting Cardinal Core");
     ttest::Test t;
     try {
         t.test2();
@@ -105,7 +106,7 @@ int main() {
         is_listener = std::getenv("IS_LISTENER") ? std::getenv("IS_LISTENER") : "FALSE"; // Causing segmentation fault.
         // Do nothing.
     } catch (std::exception& e) {
-        cout << e.what() << endl;
+        Logger.Log("", e.what(), Cardinal::Service::LOG_LEVEL::Error);
     }
 
     if (is_listener.compare("FALSE") == 0) {
