@@ -4,6 +4,7 @@
 #include "../Exception/Exceptions.h"
 #include "Events.h"
 #include "../Service/MessageService.h"
+#include "../Service/LogService.h"
 #ifndef EventMap_H
 #define EventMap_H
 using namespace std;
@@ -34,7 +35,11 @@ namespace Cardinal::Event {
             }
 
             static void RetrieveAndInvokeEventObjectFromMessage(string Message) {
+                Service::LogService logService = Service::LogService();
+                logService.Log("EventMap::RetrieveAndInvokeEventObjectFromMessage", "Called", Service::LOG_LEVEL::Debug);
                 auto [eventName, payload] = EventMap::RetrieveEventFromMessage(Message);
+                logService.Log("EventMap::RetrieveAndInvokeEventObjectFromMessage", "Received " + (string)eventName + " " + (string)payload, Service::LOG_LEVEL::Debug);
+                
                 EventMap::RetrieveAndInvokeEventObject(eventName, payload);
             }
 
