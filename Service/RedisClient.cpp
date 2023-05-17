@@ -1,27 +1,31 @@
-#include <sw/redis++/redis++.h>
+#include "Redis.hpp"
 #include "RedisClient.h"
 #include <string>
 #include "../Exception/NoRedisConfigException.h"
 #include "../Entity/Event.h"
-#include "../Event/EventMap.h"
 
 using namespace Cardinal::Exception;
 using namespace std;
 
 using namespace Cardinal::Service;
-
-RedisClient::RedisClient() {}
+using RedisInstance = AbstractRedis;
+RedisClient::RedisClient()
+{
+    try {
+        // this->redis = RedisInstance();
+    } catch (const sw::redis::Error &e) {
+        // Do nothing.
+    }
+}
 
 RedisClient::RedisClient(std::string Hostname, std::string Port, std::string Protocol)
 {
-    this->redis = sw::redis::Redis(Protocol + "://" + Hostname + ":" + Port);
-    this->subscriber = this->redis.subscriber();
+    this->redis = RedisInstance(Protocol + "://" + Hostname + ":" + Port);
 }
 
 void RedisClient::Connect(std::string Hostname, std::string Port, std::string Protocol)
 {
-    this->redis = sw::redis::Redis(Protocol + "://" + Hostname + ":" + Port);
-    this->subscriber = this->redis.subscriber();
+    this->redis = RedisInstance(Protocol + "://" + Hostname + ":" + Port);
 }
 
 void RedisClient::set(string Key, string Val)
@@ -37,8 +41,14 @@ sw::redis::OptionalString RedisClient::set(string Key)
 void RedisClient::subscribe(string Channel)
 {
     this->channel = Channel;
-    this->subscriber.subscribe(Channel);
-    this->subscriber.on_message(Cardinal::Event::EventMap::Invoke);
+    this->redis.subscriber().subscribe(Channel);
+
+    this->redis.subscriber().on_message(std::bind(&RedisClient::InvokeEventMapService, this, std::placeholders::_1, std::placeholders::_2));
+}
+
+void RedisClient::InvokeEventMapService(string channel, string message)
+{
+    // this->di->getEventMapService().Invoke(channel, message);
 }
 
 void RedisClient::write(Cardinal::Entity::Event Event)
@@ -48,7 +58,7 @@ void RedisClient::write(Cardinal::Entity::Event Event)
 
 void RedisClient::consume()
 {
-    return this->subscriber.consume();
+    return this->redis.subscriber().consume();
 }
 
 void RedisClient::publish(string message)

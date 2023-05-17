@@ -20,6 +20,8 @@ namespace Cardinal {
 
                 void setMessage (string message);
 
+                void setRaw (string raw);
+
                 void appendMessage(string message);
 
                 string getRaw();

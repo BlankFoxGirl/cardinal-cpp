@@ -8,6 +8,7 @@ using namespace Cardinal::Service;
 
 MessageService::MessageService () {}
 MessageService::MessageService (string raw) {
+    // TODO: Convert to DI.
     LogService logService = LogService();
     logService.Log("MessageService", raw, LOG_LEVEL::Debug);
     this->raw = raw;
@@ -21,6 +22,10 @@ MessageService::MessageService (string event, string message) {
 
 string MessageService::getEvent () {
     return this->event;
+}
+
+void MessageService::setRaw (string raw) {
+    this->raw = raw;
 }
 
 void MessageService::setEvent (string event) {
@@ -43,14 +48,13 @@ string MessageService::getRaw() {
 }
 
 tuple<string,string> MessageService::Decode() {
-    LogService logService = LogService();
-    logService.Log("MessageService::Decode", "Called", LOG_LEVEL::Debug);
+    // DI::getDI().getLogService().Debug("MessageService::Decode", "Called");
     if (this->event.empty() || this->message.empty()) {
-        logService.Log("MessageService::Decode", "EMPTY", LOG_LEVEL::Debug);
+        // DI::getDI().getLogService().Debug("MessageService::Decode", "EMPTY");
         throw Cardinal::Exception::InvalidMessage();
     }
 
-    logService.Log("MessageService::Decode", "Complete", LOG_LEVEL::Debug);
+    // DI::getDI().getLogService().Debug("MessageService::Decode", "Complete");
     return make_tuple(this->event, this->message);
 }
 
@@ -65,15 +69,15 @@ void MessageService::Compile () {
 }
 
 void MessageService::Decompile() {
-    LogService logService = LogService();
-    logService.Log("MessageService::Decompile", "Called", LOG_LEVEL::Debug);
+    // LogService logService = DI::getDI().getLogService();
+    // logService.Debug("MessageService::Decompile", "Called");
     if (!this->event.empty() && !this->message.empty()) {
-        logService.Log("MessageService::Decompile", "Already Parsed", LOG_LEVEL::Debug);
+        // logService.Debug("MessageService::Decompile", "Already Parsed");
         return;
     }
 
     if (this->raw.empty()) {
-        logService.Log("MessageService::Decompile", "RAW EMPTY", LOG_LEVEL::Debug);
+        // logService.Debug("MessageService::Decompile", "RAW EMPTY");
         throw Cardinal::Exception::InvalidMessage();
     }
 
@@ -90,17 +94,17 @@ void MessageService::Decompile() {
     int i = 0;
 
     while (pos != -1) {
-        logService.Log("MessageService::Decompile:87", "Iteration " + i, LOG_LEVEL::Debug);
+        // logService.Debug("MessageService::Decompile:87", "Iteration " + i);
         token = raw.substr(0, pos);
-        logService.Log("MessageService::Decompile:89", "Token " + token, LOG_LEVEL::Debug);
+        // logService.Debug("MessageService::Decompile:89", "Token " + token);
 
         if (i == 0) {
             this->event = token;
-            logService.Log("MessageService::Decompile:92", "Set event to " + token, LOG_LEVEL::Debug);
+            // logService.Debug("MessageService::Decompile:92", "Set event to " + token);
 
         } else if (i == 1) {
             this->message = token;
-            logService.Log("MessageService::Decompile:95", "Set message to " + token, LOG_LEVEL::Debug);
+            // logService.Debug("MessageService::Decompile:95", "Set message to " + token);
         }
 
         raw.erase(0, pos + delimiter.length());
@@ -108,5 +112,5 @@ void MessageService::Decompile() {
         i++;
     }
 
-    logService.Log("MessageService::Decompile", "Completed", LOG_LEVEL::Debug);
+    // logService.Debug("MessageService::Decompile", "Completed");
 }
