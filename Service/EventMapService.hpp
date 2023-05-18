@@ -5,6 +5,8 @@
 #include <iostream>
 #include "../Exception/Exceptions.h"
 #include "../Event/AbstractEvent.h"
+#include "MessageService.h"
+#include "LogService.h"
 
 using namespace std;
 using namespace Cardinal::Event;
@@ -22,14 +24,15 @@ namespace Cardinal::Service {
 
     class EventMapService: public EventMapServiceInterface {
         public:
-            EventMapService() {
-                events = {};
+            explicit EventMapService(Cardinal::Service::LogServiceInterface& s): logService_(s) {
+                this->logService_.Info("Starting EventMapService");
             }
             void Invoke (string channel, string message);
 
             void Register (string eventName, Cardinal::Event::AbstractEvent *eventObject);
 
         private:
+            Cardinal::Service::LogServiceInterface& logService_;
             eventObject events;
 
             std::__1::tuple<std::__1::string, std::__1::string> RetrieveEventFromMessage (string message);
@@ -49,5 +52,4 @@ namespace Cardinal::Service {
     };
 }
 
-// Cardinal::Service::eventObject Cardinal::Service::EventMapService::events = {};
 #endif

@@ -2,6 +2,8 @@
 #include <string>
 #include "../Entity/Event.h"
 #include "../Exception/Exceptions.h"
+#include "EventMapService.hpp"
+#include "LogService.h"
 
 using namespace Cardinal::Service;
 // using namespace Cardinal::Global;
@@ -17,29 +19,33 @@ namespace Cardinal {
             virtual ~CacheClientInterface() noexcept = default;
             virtual void Connect(std::string Hostname, std::string Port, std::string Protocol = "tcp") = 0;
 
-            virtual void set(std::string Key, std::string Val) = 0;
+            virtual void Set(std::string Key, std::string Val) = 0;
             virtual sw::redis::OptionalString set(std::string Key) = 0;
-            virtual void subscribe(std::string Channel) = 0;
-            virtual void consume() = 0;
-            virtual void publish(std::string message) = 0;
-            virtual void write(Cardinal::Entity::Event Event) = 0;
+            virtual void Subscribe(std::string Channel) = 0;
+            virtual void Consume() = 0;
+            virtual void Publish(std::string message) = 0;
+            virtual void Write(Cardinal::Entity::Event Event) = 0;
         };
 
         class RedisClient: public CacheClientInterface {
             public:
-            RedisClient();
-            RedisClient(std::string Hostname, std::string Port, std::string Protocol = "tcp");
-            void Connect(std::string Hostname, std::string Port, std::string Protocol = "tcp");
+                explicit RedisClient(Cardinal::Service::EventMapServiceInterface& s, Cardinal::Service::LogServiceInterface& l): eventMapService_(s), logService_(l) {
+                    // this->subscriber = this->redis.subscriber();
+                }
+                void Connect(std::string Hostname, std::string Port, std::string Protocol = "tcp");
 
-            void set(std::string Key, std::string Val);
-            sw::redis::OptionalString set(std::string Key);
-            void subscribe(std::string Channel);
-            void consume();
-            void publish(std::string message);
-            void write(Cardinal::Entity::Event Event);
+                void Set(std::string Key, std::string Val);
+                sw::redis::OptionalString set(std::string Key);
+                void Subscribe(std::string Channel);
+                void Consume();
+                void Publish(std::string message);
+                void Write(Cardinal::Entity::Event Event);
 
             private:
+                Cardinal::Service::EventMapServiceInterface& eventMapService_;
+                Cardinal::Service::LogServiceInterface& logService_;
                 RedisInstance redis;
+                Subscriber subscriber;
                 std::string channel;
                 void InvokeEventMapService(string channel, string message);
         };

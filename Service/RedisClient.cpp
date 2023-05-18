@@ -9,26 +9,12 @@ using namespace std;
 
 using namespace Cardinal::Service;
 using RedisInstance = AbstractRedis;
-RedisClient::RedisClient()
-{
-    try {
-        // this->redis = RedisInstance();
-    } catch (const sw::redis::Error &e) {
-        // Do nothing.
-    }
-}
-
-RedisClient::RedisClient(std::string Hostname, std::string Port, std::string Protocol)
-{
-    this->redis = RedisInstance(Protocol + "://" + Hostname + ":" + Port);
-}
-
 void RedisClient::Connect(std::string Hostname, std::string Port, std::string Protocol)
 {
     this->redis = RedisInstance(Protocol + "://" + Hostname + ":" + Port);
 }
 
-void RedisClient::set(string Key, string Val)
+void RedisClient::Set(string Key, string Val)
 {
     this->redis.set(Key, Val);
 }
@@ -38,30 +24,41 @@ sw::redis::OptionalString RedisClient::set(string Key)
     return (sw::redis::OptionalString)this->redis.get(Key);
 }
 
-void RedisClient::subscribe(string Channel)
+void RedisClient::Subscribe(string Channel)
 {
+    this->logService_.Verbose("RedisClient::Subscribe Subscribing to channel: " + Channel);
     this->channel = Channel;
-    this->redis.subscriber().subscribe(Channel);
 
-    this->redis.subscriber().on_message(std::bind(&RedisClient::InvokeEventMapService, this, std::placeholders::_1, std::placeholders::_2));
+    this->subscriber = this->redis.subscriber();
+    this->subscriber.subscribe(Channel);
+
+    this->logService_.Verbose("RedisClient::Subscribe Binding OnMessage Handler ");
+
+    this->subscriber.on_message([this](std::string channel, std::string message) {
+        this->logService_.Verbose("Called Subscriber on_message");
+        this->InvokeEventMapService(channel, message);
+    });
 }
 
 void RedisClient::InvokeEventMapService(string channel, string message)
 {
-    // this->di->getEventMapService().Invoke(channel, message);
+    this->logService_.Verbose("Called RedisClient::InvokeEventMapService");
+    this->logService_.Debug("RedisClient::InvokeEventMapService received", message);
+    this->logService_.Verbose("RedisClient::InvokeEventMapService invoking eventMapService_.Invoke");
+    this->eventMapService_.Invoke(channel, message);
 }
 
-void RedisClient::write(Cardinal::Entity::Event Event)
+void RedisClient::Write(Cardinal::Entity::Event Event)
 {
     this->redis.publish(Event.key, Event.payload);
 }
 
-void RedisClient::consume()
+void RedisClient::Consume()
 {
-    return this->redis.subscriber().consume();
+    return this->subscriber.consume();
 }
 
-void RedisClient::publish(string message)
+void RedisClient::Publish(string message)
 {
     this->redis.publish(this->channel, message);
 }

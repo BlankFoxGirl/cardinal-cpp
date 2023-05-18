@@ -16,46 +16,59 @@
 #include <cstring>
 #include <signal.h>
 #include <arpa/inet.h>
+#include "LogService.h"
+#include "../Exception/Exceptions.h"
+
 using namespace std;
 
 namespace Cardinal::Service
 {
-    class TCPListenerService
+    class TCPListenerServiceInterface {
+        public:
+            virtual ~TCPListenerServiceInterface() noexcept = default;
+            virtual void Start() = 0;
+            virtual void Accept() = 0;
+            virtual void Bind(string port, char *address) = 0;
+            virtual void Bind(string port, string address) = 0;
+    };
+
+    class TCPListenerService: public TCPListenerServiceInterface
     {
-        TCPListenerService();
-        TCPListenerService(string port);
-        TCPListenerService(string port, char *address);
-        void *LocalConnection(void *args);
-        void Start();
-        static void *Connection(void *args)
-        {
-            TCPListenerService t = TCPListenerService();
-            t.LocalConnection(args);
-            return args;
+    public:
+        explicit TCPListenerService(Cardinal::Service::LogServiceInterface& s): logService_(s) {
+            this->logService_.Verbose("Starting TCPListenerService");
         }
+
+        void Bind(string port, char *address);
+        void Bind(string port, string address);
+        void Start();
+        void Accept();
 
         static void sig_handler(int signo)
         {
             /* signal handler */
             if (signo == SIGINT)
             {
-                close(TCPListenerService::mistfd);
+                // close(Cardinal::Service::TCPListenerService::mistfd);
                 exit(1);
             }
         }
 
     private:
+        Cardinal::Service::LogServiceInterface& logService_;
         u_int32_t Port;
         u_int32_t Address;
-        static int mistfd;
+        sockaddr_in clientaddr;
+        socklen_t addrlen;
+        int mistfd = 0;
+        static void *Connection(void *args);
+        void *LocalConnection(void *args);
         void CreateSocketStream();
         sockaddr_in ConfigureServerAddress();
-        void ServerLoop(sockaddr_in &clientaddr, socklen_t &addrlen);
-        void ServerLoopInnerContent(sockaddr_in &clientaddr, socklen_t &addrlen);
+        void SetSocketData(sockaddr_in &clientaddr, socklen_t &addrlen);
         void SetSignalHandlers();
         void StoreServerAddressInMemory(sockaddr_in serverAddress);
         void BindServerAddressAndPort(sockaddr_in serverAddress);
         void ListenForConnections();
     };
 }
-int Cardinal::Service::TCPListenerService::mistfd = 0;

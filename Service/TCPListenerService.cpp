@@ -41,22 +41,9 @@ struct req
     sockaddr_in clientaddr;
 };
 
-TCPListenerService::TCPListenerService()
+void TCPListenerService::Bind(string port, char *address)
 {
-    // Default values.
-    this->Port = stoi("7777");
-    this->Address = inet_pton(AF_INET, "0.0.0.0", NULL);
-}
-
-TCPListenerService::TCPListenerService(string port)
-{
-    // Specified Port!
-    this->Port = stoi(port);
-    this->Address = inet_pton(AF_INET, "0.0.0.0", NULL);
-}
-
-TCPListenerService::TCPListenerService(string port, char *address)
-{
+    this->logService_.Verbose("Called TCPListenerService::Bind");
     // Specified Port!
     this->Port = stoi(port);
 
@@ -64,11 +51,29 @@ TCPListenerService::TCPListenerService(string port, char *address)
     this->Address = inet_pton(AF_INET, address, NULL);
 }
 
+void TCPListenerService::Bind(string port, string address)
+{
+    this->logService_.Verbose("Called TCPListenerService::Bind");
+    // Specified Port!
+    this->logService_.Verbose("TCPListenerService::Bind Set Port");
+    this->Port = stoi(port);
+
+    // Specified Address!
+    this->logService_.Verbose("TCPListenerService::Bind Convert Str to Const Char*");
+    const char* addressChar = address.c_str();
+    
+    this->logService_.Verbose("TCPListenerService::Bind Set Address");
+    inet_pton(AF_INET, addressChar, &this->Address);
+    this->logService_.Verbose("TCPListenerService::Bind Complete");
+}
+
 void TCPListenerService::Start()
 {
+    this->logService_.Verbose("Called TCPListenerService::Start");
     sockaddr_in clientaddr; // client address
     sockaddr_in serverAddress = ConfigureServerAddress();
     socklen_t addrlen = sizeof(clientaddr);
+    this->mistfd = 0;
 
     CreateSocketStream();
     StoreServerAddressInMemory(serverAddress);
@@ -76,12 +81,14 @@ void TCPListenerService::Start()
     ListenForConnections();
     SetSignalHandlers();
 
-    ServerLoop(clientaddr, addrlen);
+    this->logService_.Info("Server is listening on port ", to_string(this->Port));
+    SetSocketData(clientaddr, addrlen);
 }
 
 void TCPListenerService::ListenForConnections()
 {
-    if ((listen(TCPListenerService::mistfd, 5)) != 0)
+    this->logService_.Verbose("Called TCPListenerService::ListenForConnections");
+    if ((listen(this->mistfd, 5)) != 0)
     {
         throw Cardinal::Exception::TCPSocketListenException();
     }
@@ -89,7 +96,8 @@ void TCPListenerService::ListenForConnections()
 
 void TCPListenerService::BindServerAddressAndPort(sockaddr_in serverAddress)
 {
-    if (::bind(TCPListenerService::mistfd, (sockaddr *)&serverAddress, sizeof(serverAddress)) == -1)
+    this->logService_.Verbose("Called TCPListenerService::BindServerAddressAndPort");
+    if (::bind(this->mistfd, (sockaddr *)&serverAddress, sizeof(serverAddress)) == -1)
     {
         throw Cardinal::Exception::TCPSocketBindException();
     }
@@ -97,33 +105,34 @@ void TCPListenerService::BindServerAddressAndPort(sockaddr_in serverAddress)
 
 void TCPListenerService::StoreServerAddressInMemory(sockaddr_in serverAddress)
 {
+    this->logService_.Verbose("Called TCPListenerService::StoreServerAddressInMemory");
     memset((sockaddr *)&serverAddress, 0, sizeof(serverAddress));
 }
 
 void TCPListenerService::SetSignalHandlers()
 {
+    this->logService_.Verbose("Called TCPListenerService::SetSignalHandlers");
     signal(SIGINT, TCPListenerService::sig_handler);
     signal(SIGTSTP, TCPListenerService::sig_handler);
 }
 
-void TCPListenerService::ServerLoop(sockaddr_in &clientaddr, socklen_t &addrlen)
+void TCPListenerService::SetSocketData(sockaddr_in &clientaddr, socklen_t &addrlen)
 {
-    while (1)
-    {
-        ServerLoop(clientaddr, addrlen);
-    }
+    this->logService_.Verbose("Called TCPListenerService::SetSocketData");
+    this->clientaddr = clientaddr;
+    this->addrlen = addrlen;
 }
 
-void TCPListenerService::ServerLoopInnerContent(sockaddr_in &clientaddr, socklen_t &addrlen)
+void TCPListenerService::Accept()
 {
     int connfd;
-    if ((connfd = accept(TCPListenerService::mistfd, (sockaddr *)&clientaddr, &addrlen)) < 0)
+    if ((connfd = accept(this->mistfd, (sockaddr *)&this->clientaddr, &this->addrlen)) < 0)
     {
-        std::cout << "\n\t Client connection declined..." << '\n';
+        this->logService_.Debug("Server accept failed...", "Client connection declined.");
     }
     else
     {
-        std::cout << "\n\t Client connection accepted..." << '\n';
+        this->logService_.Debug("Client connection accepted!");
     }
 
     /* Filling the parameter values of the threaded function */
@@ -133,7 +142,9 @@ void TCPListenerService::ServerLoopInnerContent(sockaddr_in &clientaddr, socklen
     r->clientaddr = clientaddr;
     r->des = connfd;
 
-    pthread_create(&thread_tcp[threadno_tcp++], NULL, (THREADFUNCPTR)&TCPListenerService::Connection, (void *)r);
+    auto context = std::make_tuple(this, r);
+
+    pthread_create(&thread_tcp[threadno_tcp++], NULL, Connection, static_cast<void *>(&context));
 
     if (threadno_tcp == 100)
     {
@@ -141,32 +152,52 @@ void TCPListenerService::ServerLoopInnerContent(sockaddr_in &clientaddr, socklen
     }
 }
 
+void *TCPListenerService::Connection(void *args)
+{
+    // Map args to tuple
+    std::tuple<TCPListenerService*, req*> arg = *reinterpret_cast<std::tuple<TCPListenerService*, req*>*>(args);
+
+    // Extract first element of tuple args
+    auto t = std::get<0>(arg);
+
+    // Extract second element of tuple args
+    auto c = std::get<1>(arg);
+
+    return reinterpret_cast<TCPListenerService*>(t)->LocalConnection(c);
+}
+
 void *TCPListenerService::LocalConnection(void *args)
 {
+    this->logService_.Verbose("Called TCPListenerService::LocalConnection");
     req sock = *((req *)args);
     msg buffer;
+    int n = 1;
 
-    while (1)
+    while (n > 0)
     {
         /* Read the packet sent by the established client */
-        read(sock.des, &buffer, sizeof(buffer));
+        n = read(sock.des, &buffer, sizeof(buffer));
 
-        std::cout << "\n\t File name: " << buffer.filename;
-        std::cout << "\n\n"
-                  << buffer.file << '\n';
+        this->logService_.Debug("File name: " + string(buffer.filename));
+        this->logService_.Debug(string(buffer.file));
     }
+    close(sock.des);
+    this->logService_.Verbose("TCPListenerService::LocalConnection Complete");
 }
 
 void TCPListenerService::CreateSocketStream()
 {
-    if ((TCPListenerService::mistfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+    this->logService_.Verbose("Called TCPListenerService::CreateSocketStream");
+    if ((this->mistfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
+        this->logService_.Verbose("TCPListenerService::mistfd as a socket == -1");
         throw Cardinal::Exception::TCPSocketCreationException();
     }
 }
 
 sockaddr_in TCPListenerService::ConfigureServerAddress()
 {
+    this->logService_.Verbose("Called TCPListenerService::ConfigureServerAddress");
     sockaddr_in serverAddress;                            // server address
     serverAddress.sin_family = AF_INET;                   // IPv4 address family
     serverAddress.sin_addr.s_addr = htons(this->Address); // Give the local machine address
