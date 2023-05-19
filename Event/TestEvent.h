@@ -1,3 +1,5 @@
+#ifndef TEE_H
+#define TEE_H
 #include <string>
 #include <iostream>
 #include "AbstractEvent.h"
@@ -18,3 +20,4 @@ namespace Cardinal::Event {
             Cardinal::Service::LogServiceInterface &logService_;
     };
 }
+#endif

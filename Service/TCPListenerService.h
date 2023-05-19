@@ -1,3 +1,5 @@
+#ifndef TCPS_H
+#define TCPS_H
 #include <string>
 #include <unistd.h>
 #include <signal.h>
@@ -17,6 +19,7 @@
 #include <signal.h>
 #include <arpa/inet.h>
 #include "LogService.h"
+#include "UserService.hpp"
 #include "../Exception/Exceptions.h"
 
 using namespace std;
@@ -35,7 +38,7 @@ namespace Cardinal::Service
     class TCPListenerService: public TCPListenerServiceInterface
     {
     public:
-        explicit TCPListenerService(Cardinal::Service::LogServiceInterface& s): logService_(s) {
+        explicit TCPListenerService(Cardinal::Service::LogServiceInterface& s, Cardinal::Service::UserServiceInterface& s1): logService_(s), userService_(s1) {
             this->logService_.Verbose("Starting TCPListenerService");
         }
 
@@ -49,6 +52,7 @@ namespace Cardinal::Service
             /* signal handler */
             if (signo == SIGINT)
             {
+                // ToDo: Socket should close when signal is handled.
                 // close(Cardinal::Service::TCPListenerService::mistfd);
                 exit(1);
             }
@@ -56,6 +60,7 @@ namespace Cardinal::Service
 
     private:
         Cardinal::Service::LogServiceInterface& logService_;
+        Cardinal::Service::UserServiceInterface& userService_;
         u_int32_t Port;
         u_int32_t Address;
         sockaddr_in clientaddr;
@@ -72,3 +77,4 @@ namespace Cardinal::Service
         void ListenForConnections();
     };
 }
+#endif

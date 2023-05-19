@@ -1,3 +1,5 @@
+#ifndef ELS_H
+#define ELS_H
 #include <string>
 
 using namespace std;
@@ -19,3 +21,4 @@ namespace Cardinal::Service {
         }
     };
 }
+#endif

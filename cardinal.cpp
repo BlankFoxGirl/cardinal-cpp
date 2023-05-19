@@ -4,6 +4,7 @@
 #include "Service/EventMapService.hpp"
 #include "Service/RedisClient.h"
 #include "Service/TCPListenerService.h"
+#include "Service/UserService.hpp"
 #include "Event/Events.h"
 #include <unistd.h>
 #include <stdlib.h>
@@ -22,8 +23,9 @@ namespace Cardinal {
                 Cardinal::Service::LogServiceInterface& s,
                 Cardinal::Service::EventMapServiceInterface& s1,
                 Cardinal::Service::CacheClientInterface& s2,
-                Cardinal::Service::TCPListenerServiceInterface& s3
-            ) : logService_(s), eventMapService_(s1), redisService_(s2), tcpListenerService_(s3) {
+                Cardinal::Service::TCPListenerServiceInterface& s3,
+                Cardinal::Service::UserServiceInterface& s4
+            ) : logService_(s), eventMapService_(s1), redisService_(s2), tcpListenerService_(s3), userService_(s4) {
                 this->Init();
             }
 
@@ -32,6 +34,7 @@ namespace Cardinal {
             Cardinal::Service::EventMapServiceInterface& eventMapService_;
             Cardinal::Service::CacheClientInterface& redisService_;
             Cardinal::Service::TCPListenerServiceInterface& tcpListenerService_;
+            Cardinal::Service::UserServiceInterface& userService_;
             bool Active = false;
             bool dryRun = false;
             bool is_listener = false;
@@ -238,7 +241,8 @@ int main() {
         di::bind<Cardinal::Service::LogServiceInterface>().to<Cardinal::Service::LogService>(),
         di::bind<Cardinal::Service::EventMapServiceInterface>().to<Cardinal::Service::EventMapService>(),
         di::bind<Cardinal::Service::CacheClientInterface>().to<Cardinal::Service::RedisClient>(),
-        di::bind<Cardinal::Service::TCPListenerServiceInterface>().to<Cardinal::Service::TCPListenerService>()
+        di::bind<Cardinal::Service::TCPListenerServiceInterface>().to<Cardinal::Service::TCPListenerService>(),
+        di::bind<Cardinal::Service::UserServiceInterface>().to<Cardinal::Service::UserService>()
     );
 
 
