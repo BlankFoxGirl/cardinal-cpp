@@ -3,7 +3,6 @@
 #include <string>
 #include "../MessageService.hpp"
 #include <sw/redis++/redis++.h>
-#include "../Memory/Redis.hpp"
 
 namespace Cardinal::Service::Message {
     class MessageClient: public Cardinal::Service::MessageServiceInterface {

@@ -2,8 +2,8 @@
 #define US_H
 #include <map>
 #include "../Entity/UserEntity.hpp"
-#include "RedisClient.h"
-#include "LogService.h"
+#include "MessageService.hpp"
+#include "LogService.hpp"
 
 namespace Cardinal::Service {
     class UserServiceInterface {

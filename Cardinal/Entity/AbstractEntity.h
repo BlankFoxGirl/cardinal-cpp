@@ -1,7 +1,6 @@
-#include <string>
-#include "../Service/ObjectIdentityService.h"
 #ifndef ABSTE_H
 #define ABSTE_H
+#include <string>
 using namespace std;
 
 namespace Cardinal {

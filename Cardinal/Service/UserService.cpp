@@ -1,7 +1,7 @@
 #include "UserService.hpp"
 #include <map>
 #include "../Entity/UserEntity.hpp"
-#include "../Entity/Event.h"
+#include "../Entity/Message.hpp"
 
 using Cardinal::Service::UserService;
 
