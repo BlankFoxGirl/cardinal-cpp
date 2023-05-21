@@ -7,8 +7,13 @@ using namespace std;
 namespace Cardinal::Entity {
     class Event: public AbstractEntity {
         public:
-        std::string key = "";
-        std::string payload = "";
+            Event(string key, string payload) {
+                this->key = key;
+                this->payload = payload;
+            }
+
+            std::string key = "";
+            std::string payload = "";
     };
 }
 #endif

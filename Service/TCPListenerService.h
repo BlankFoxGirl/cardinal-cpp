@@ -20,12 +20,20 @@
 #include <arpa/inet.h>
 #include "LogService.h"
 #include "UserService.hpp"
+#include "RedisClient.h"
 #include "../Exception/Exceptions.h"
 
 using namespace std;
 
 namespace Cardinal::Service
 {
+    struct req
+    {
+        int des;
+        socklen_t addlen;
+        sockaddr_in clientaddr;
+    };
+
     class TCPListenerServiceInterface {
         public:
             virtual ~TCPListenerServiceInterface() noexcept = default;

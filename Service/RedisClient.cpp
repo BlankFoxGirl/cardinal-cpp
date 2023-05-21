@@ -24,10 +24,9 @@ sw::redis::OptionalString RedisClient::set(string Key)
     return (sw::redis::OptionalString)this->redis.get(Key);
 }
 
-void RedisClient::Subscribe(string Channel)
+void RedisClient::SubscribeEvent(string Channel)
 {
     this->logService_.Verbose("RedisClient::Subscribe Subscribing to channel: " + Channel);
-    this->channel = Channel;
 
     this->subscriber = this->redis.subscriber();
     this->subscriber.subscribe(Channel);
@@ -38,6 +37,11 @@ void RedisClient::Subscribe(string Channel)
         this->logService_.Verbose("Called Subscriber on_message");
         this->InvokeEventMapService(channel, message);
     });
+}
+
+Subscriber RedisClient::GetSubscriber()
+{
+    return this->redis.subscriber();
 }
 
 void RedisClient::InvokeEventMapService(string channel, string message)
@@ -58,7 +62,3 @@ void RedisClient::Consume()
     return this->subscriber.consume();
 }
 
-void RedisClient::Publish(string message)
-{
-    this->redis.publish(this->channel, message);
-}

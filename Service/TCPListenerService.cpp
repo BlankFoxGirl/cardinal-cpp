@@ -2,7 +2,10 @@
 #include "../Exception/TCPSocketCreationException.h"
 #include "../Exception/TCPSocketBindException.h"
 #include "../Exception/TCPSocketListenException.h"
+#include "../Entity/UserEntity.hpp"
 #include <iostream>
+#include <vector>
+#include <sys/poll.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <string.h>
@@ -31,14 +34,6 @@ struct msg
 {
     char filename[100];
     char file[2048];
-};
-
-/* Structure to hold the necessary parameters to pass into the threaded function */
-struct req
-{
-    int des;
-    socklen_t addlen;
-    sockaddr_in clientaddr;
 };
 
 void TCPListenerService::Bind(string port, char *address)
@@ -128,7 +123,7 @@ void TCPListenerService::Accept()
     int connfd;
     if ((connfd = accept(this->mistfd, (sockaddr *)&this->clientaddr, &this->addrlen)) < 0)
     {
-        this->logService_.Debug("Server accept failed...", "Client connection declined.");
+        this->logService_.Error("Server accept failed...", "Client connection declined.");
     }
     else
     {
@@ -171,18 +166,61 @@ void *TCPListenerService::LocalConnection(void *args)
     this->logService_.Verbose("Called TCPListenerService::LocalConnection");
     req sock = *((req *)args);
     msg buffer;
+    vector<char> buf(32); // you are using C++ not C
     int n = 1;
+    // auto User = Cardinal::Entity::UserEntity(sock);
+    auto User = this->userService_.RegisterConnection();
+    std::string connectionUUID = User.getUUID();
+    this->logService_.Debug("Connection assigned to userUUID: " + connectionUUID);
+    timeval t;
+    t.tv_sec = 2;
+    t.tv_usec = 2000;
 
-    while (n > 0)
+    struct pollfd fds[200];
+    memset(fds, 0 , sizeof(fds));
+
+    /*************************************************************/
+    /* Set up the initial listening socket                        */
+    /*************************************************************/
+    fds[0].fd = sock.des;
+    fds[0].events = POLLIN;
+
+    while (n >= 0)
     {
         /* Read the packet sent by the established client */
-        n = read(sock.des, &buffer, sizeof(buffer));
+        // n = read(sock.des, &buffer, sizeof(buffer));
+        if (User.hasMessagesToBeSent()) {
+            this->logService_.Verbose("User has messages waiting to be sent.");
+            string message = User.GetMessageToSend();
+            this->logService_.Debug("Sending message " + string(message), " to userUUID: " + connectionUUID);
+            n = write(sock.des, &message, sizeof(message));
+            this->logService_.Debug("Message sent to userUUID: " + connectionUUID);
+        }
 
-        this->logService_.Debug("File name: " + string(buffer.filename));
-        this->logService_.Debug(string(buffer.file));
+        n = poll(fds, 1, 500);
+        if (n > 0)
+        {
+            this->logService_.Verbose("Data available to be read from userUUID: " + connectionUUID);
+            n = read(sock.des, buf.data(), buf.size());
+
+            if (buf.size() != 0) {
+                string data;
+                std::transform(buf.begin(), buf.end(), std::back_inserter(data),
+                [](char c)
+                {
+                    return c;
+                });
+
+                this->logService_.Debug(data);
+                User.Write(data);
+            }
+        }
     }
+
     close(sock.des);
     this->logService_.Verbose("TCPListenerService::LocalConnection Complete");
+
+    return args;
 }
 
 void TCPListenerService::CreateSocketStream()
@@ -193,6 +231,8 @@ void TCPListenerService::CreateSocketStream()
         this->logService_.Verbose("TCPListenerService::mistfd as a socket == -1");
         throw Cardinal::Exception::TCPSocketCreationException();
     }
+
+    // fcntl(this->mistfd, F_SETFL, O_NONBLOCK);
 }
 
 sockaddr_in TCPListenerService::ConfigureServerAddress()

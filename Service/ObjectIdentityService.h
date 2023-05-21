@@ -9,7 +9,7 @@ namespace Cardinal {
     namespace Service {
         class ObjectIdentityService {
             public:
-            std::string generateUUID();
+                static std::string generateUUID();
         };
     }
 }

@@ -21,10 +21,10 @@ namespace Cardinal {
 
             virtual void Set(std::string Key, std::string Val) = 0;
             virtual sw::redis::OptionalString set(std::string Key) = 0;
-            virtual void Subscribe(std::string Channel) = 0;
+            virtual void SubscribeEvent(std::string Channel) = 0;
             virtual void Consume() = 0;
-            virtual void Publish(std::string message) = 0;
             virtual void Write(Cardinal::Entity::Event Event) = 0;
+            virtual Subscriber GetSubscriber() = 0;
         };
 
         class RedisClient: public CacheClientInterface {
@@ -36,17 +36,16 @@ namespace Cardinal {
 
                 void Set(std::string Key, std::string Val);
                 sw::redis::OptionalString set(std::string Key);
-                void Subscribe(std::string Channel);
+                void SubscribeEvent(std::string Channel);
                 void Consume();
-                void Publish(std::string message);
                 void Write(Cardinal::Entity::Event Event);
+                Subscriber GetSubscriber();
 
             private:
                 Cardinal::Service::EventMapServiceInterface& eventMapService_;
                 Cardinal::Service::LogServiceInterface& logService_;
                 RedisInstance redis;
                 Subscriber subscriber;
-                std::string channel;
                 void InvokeEventMapService(string channel, string message);
         };
     }

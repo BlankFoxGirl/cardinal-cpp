@@ -8,8 +8,9 @@ using namespace Cardinal::Entity;
 
 AbstractEntity::AbstractEntity(){
     if (!this->hasUUID()) {
-        Cardinal::Service::ObjectIdentityService identity;
-        this->setUUID(identity.generateUUID());
+        this->setUUID(
+            Cardinal::Service::ObjectIdentityService::generateUUID()
+        );
     }
 }
 
