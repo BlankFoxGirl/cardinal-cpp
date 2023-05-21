@@ -1,6 +1,7 @@
 
 #include "../Service/Services.hpp"
 #include "../Service/Log/LogClient.hpp"
+#include "../Service/Message/MessageClient.hpp"
 #include "../../vendor/boost/di.hpp"
 #include "DI.hpp"
 #include "../Core.hpp"
@@ -18,10 +19,10 @@ Cardinal::Global::DI::DI() {
 
 void Cardinal::Global::DI::Init() {
     auto injector = di::make_injector(
-        di::bind<LogServiceInterface>().to<Cardinal::Service::Log::LogClient>()
+        di::bind<LogServiceInterface>().to<Cardinal::Service::Log::LogClient>(),
         // boost::di::bind<CommunicationServiceInterface>().to<CommunicationService>(),
         // boost::di::bind<MemoryServiceInterface>().to<MemoryService>(),
-        // boost::di::bind<MessageServiceInterface>().to<MessageService>(),
+        boost::di::bind<MessageServiceInterface>().to<Cardinal::Service::Message::MessageClient>()
         // boost::di::bind<StorageServiceInterface>().to<StorageService>()
     );
 

@@ -13,10 +13,19 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 file(GLOB_RECURSE SOURCES
     Cardinal/Core.hpp
     # Cardinal/**/*.hpp
+    Cardinal/Entity/*.hpp
+    Cardinal/Entity/*.cpp
+    Cardinal/Exception/*.hpp
+    Cardinal/Exception/*.cpp
+    Cardinal/Service/Memory/*.hpp
+    Cardinal/Service/Memory/*.cpp
     Cardinal/Service/LogService.hpp
+    Cardinal/Service/MessageService.hpp
     Cardinal/Service/Services.hpp
     Cardinal/Service/Log/*.hpp
     Cardinal/Service/Log/*.cpp
+    Cardinal/Service/Message/*.cpp
+    Cardinal/Service/Message/*.hpp
     Cardinal/Global/DI.hpp
     Cardinal/Global/DI.cpp
     Cardinal/Core.cpp

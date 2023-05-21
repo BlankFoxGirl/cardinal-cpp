@@ -1,7 +1,6 @@
 #ifndef CARDINAL_SERVICE_MESSAGESERVICE_H
 #define CARDINAL_SERVICE_MESSAGESERVICE_H
 
-#include "Message/MessageClient.hpp"
 #include "../Entity/Message.hpp"
 
 namespace Cardinal::Service {
@@ -16,6 +15,7 @@ namespace Cardinal::Service {
 
         virtual void Dispatch(Cardinal::Entity::Message message) = 0;
         virtual void Consume(Queue queue) = 0;
+        virtual void Connect(std::string ConnectUrl) = 0;
     };
 }
 #endif

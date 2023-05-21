@@ -21,10 +21,11 @@ namespace Cardinal {
             std::string getPoly();
 
             private:
-            std::string poly = "";
-            std::string UUID = "";
+                std::string poly = "";
+                std::string UUID = "";
 
-            std::string setUUID(std::string UUID);
+                std::string setUUID(std::string UUID);
+                std::string generateUUID();
         };
     }
 }
