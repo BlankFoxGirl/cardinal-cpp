@@ -150,7 +150,7 @@ namespace Cardinal {
                 this->eventMapService_.Register("TestEvent", t);
                 this->logService_.Debug("Events registered!");
                 this->logService_.Debug("Subscribing to Redis channel 'test'");
-                this->redisService_.Subscribe("test");
+                this->redisService_.SubscribeEvent("test");
                 this->logService_.Debug("Subscribed to channel 'test'");
             }
 
