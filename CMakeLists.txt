@@ -11,13 +11,17 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 file(GLOB_RECURSE SOURCES
-    Entity/*.h
-    Entity/*.cpp
-    Service/*.h
-    Service/*.cpp
-    Exception/*.h
-    Exception/*.cpp
-    cardinal.cpp
+    Cardinal/Core.hpp
+    # Cardinal/**/*.hpp
+    Cardinal/Service/LogService.hpp
+    Cardinal/Service/Services.hpp
+    Cardinal/Service/Log/*.hpp
+    Cardinal/Service/Log/*.cpp
+    Cardinal/Global/DI.hpp
+    Cardinal/Global/DI.cpp
+    Cardinal/Core.cpp
+    # Cardinal/**/*.cpp
+    application.cpp
 )
 
 

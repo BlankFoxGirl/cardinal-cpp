@@ -5,26 +5,20 @@
 #include <iostream>
 #include "../Exception/Exceptions.h"
 #include "../Event/AbstractEvent.h"
-#include "MessageService.h"
-#include "LogService.h"
+#include "../../Service/MessageService.hpp"
+#include "../../Service/LogService.hpp"
 
 using namespace std;
 using namespace Cardinal::Event;
 using namespace Cardinal::Exception;
 // using namespace Cardinal::Global;
 
-namespace Cardinal::Service {
+namespace Cardinal::Component::EventMap {
     typedef map<string, Cardinal::Event::AbstractEvent*> eventObject;
-    class EventMapServiceInterface {
-    public:
-        virtual ~EventMapServiceInterface() noexcept = default;
-        virtual void Invoke (string channel, string message) = 0;
-        virtual void Register (string eventName, Cardinal::Event::AbstractEvent *eventObject) = 0;
-    };
 
-    class EventMapService: public EventMapServiceInterface {
+    class EventMap {
         public:
-            explicit EventMapService(Cardinal::Service::LogServiceInterface& s): logService_(s) {
+            explicit EventMap(Cardinal::Service::LogServiceInterface& s): logService_(s) {
                 this->logService_.Info("Starting EventMapService");
             }
             void Invoke (string channel, string message);

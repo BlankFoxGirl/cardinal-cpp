@@ -1,21 +1,21 @@
 #include <string>
-#include "LogService.h"
+#include "LogClient.hpp"
 #include <iostream>
 #include <time.h>
 #include <sstream>
 
 using namespace std;
-using namespace Cardinal::Service;
+using namespace Cardinal::Service::Log;
 
 /**
  * // Constructor //
 */
-LogService::LogService() {} // New Instance of log service.
+LogClient::LogClient() {} // New Instance of log service.
 
 /**
  * // Public Methods //
 */
-bool LogService::Log(string message, string payload, Service::LOG_LEVEL level)
+bool LogClient::Log(string message, string payload, Cardinal::Service::LOG_LEVEL level)
 {
     if (!isLogLevelGreaterOrEqualToMinimum(level)) {
         return false;
@@ -42,37 +42,37 @@ bool LogService::Log(string message, string payload, Service::LOG_LEVEL level)
     return true;
 }
 
-void LogService::Error(string message, string payload)
+void LogClient::Error(string message, string payload)
 {
     this->ErrorLog(message, payload);
 }
 
-void LogService::Warning(string message, string payload)
+void LogClient::Warning(string message, string payload)
 {
     this->WarningLog(message, payload);
 }
 
-void LogService::Info(string message, string payload)
+void LogClient::Info(string message, string payload)
 {
     this->InfoLog(message, payload);
 }
 
-void LogService::Debug(string message, string payload)
+void LogClient::Debug(string message, string payload)
 {
     this->DebugLog(message, payload);
 }
 
-void LogService::Verbose(string message, string payload)
+void LogClient::Verbose(string message, string payload)
 {
     this->VerboseLog(message, payload);
 }
 
-void LogService::SetMinimumLogLevel(LOG_LEVEL level)
+void LogClient::SetMinimumLogLevel(LOG_LEVEL level)
 {
     this->MinimumLogLevel = level;
 }
 
-void LogService::SetEnvironment(string environment)
+void LogClient::SetEnvironment(string environment)
 {
     this->Environment = environment;
 }
@@ -80,57 +80,57 @@ void LogService::SetEnvironment(string environment)
 /**
  * // Private Methods //
 */
-bool LogService::isLogLevelGreaterOrEqualToMinimum(LOG_LEVEL level)
+bool LogClient::isLogLevelGreaterOrEqualToMinimum(LOG_LEVEL level)
 {
     return (int)level >= (int)this->MinimumLogLevel;
 }
 
-void LogService::WriteToCout(string message, string colour)
+void LogClient::WriteToCout(string message, string colour)
 {
     cout << colour << this->GetTimeStampUTC() << this->GetEnvironment() << message << ClearColour() << std::endl;
 }
 
-void LogService::WriteToFile()
+void LogClient::WriteToFile()
 {
     // Do nothing.
 }
 
-void LogService::WriteToDatabase()
+void LogClient::WriteToDatabase()
 {
     // Do nothing.
 }
 
-void LogService::WriteToRedis()
+void LogClient::WriteToRedis()
 {
     // Do nothing.
 }
 
-void LogService::ErrorLog(string message, string payload)
+void LogClient::ErrorLog(string message, string payload)
 {
     WriteToCout("[ERROR] " + message + " " + payload, SetColour("red"));
 }
 
-void LogService::WarningLog(string message, string payload)
+void LogClient::WarningLog(string message, string payload)
 {
     WriteToCout("[WARNING] " + message + " " + payload, SetColour("yellow"));
 }
 
-void LogService::InfoLog(string message, string payload)
+void LogClient::InfoLog(string message, string payload)
 {
     WriteToCout("[INFO] " + message + " " + payload, SetColour("white"));
 }
 
-void LogService::DebugLog(string message, string payload)
+void LogClient::DebugLog(string message, string payload)
 {
     WriteToCout("[DEBUG] " + message + " " + payload, SetColour("blue"));
 }
 
-void LogService::VerboseLog(string message, string payload)
+void LogClient::VerboseLog(string message, string payload)
 {
     WriteToCout("[VERBOSE] " + message + " " + payload);
 }
 
-string LogService::SetColour(string colour)
+string LogClient::SetColour(string colour)
 {
     if (colour.compare("white") == 0) {
         return "\033[1;37m"; // White.
@@ -147,17 +147,17 @@ string LogService::SetColour(string colour)
     return this->ClearColour(); // Normal Colour.
 }
 
-string LogService::ClearColour()
+string LogClient::ClearColour()
 {
     return "\033[0m"; // Normal Colour.
 }
 
-string LogService::GetEnvironment()
+string LogClient::GetEnvironment()
 {
     return "[" + this->Environment + "]";
 }
 
-string LogService::GetTimeStampUTC()
+string LogClient::GetTimeStampUTC()
 {
     time_t rawtime;
     struct tm * ptm;
@@ -171,5 +171,5 @@ string LogService::GetTimeStampUTC()
     return "[" + (string)output + "]";
 }
 
-LOG_LEVEL LogService::MinimumLogLevel = LOG_LEVEL::Info;
-string LogService::Environment = "INIT";
+Cardinal::Service::LOG_LEVEL LogClient::MinimumLogLevel = LOG_LEVEL::Info;
+string LogClient::Environment = "INIT";
