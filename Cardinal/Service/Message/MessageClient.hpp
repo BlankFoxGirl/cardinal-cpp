@@ -10,12 +10,13 @@ namespace Cardinal::Service::Message {
             MessageClient ();
 
             void Dispatch(Cardinal::Entity::Message message);
+            void SubscribeAndConsume(Cardinal::Service::Queue queue);
             void Consume(Cardinal::Service::Queue queue);
             void Connect(std::string ConnectUrl);
         private:
             // static reference to the message server?
             static sw::redis::Redis redis;
-            static sw::redis::Subscriber subscriber;
+            static std::vector<sw::redis::Subscriber*> subscribers;
     };
 }
 

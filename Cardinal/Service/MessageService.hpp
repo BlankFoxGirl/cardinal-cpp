@@ -14,6 +14,7 @@ namespace Cardinal::Service {
         virtual ~MessageServiceInterface() noexcept = default;
 
         virtual void Dispatch(Cardinal::Entity::Message message) = 0;
+        virtual void SubscribeAndConsume(Queue queue) = 0;
         virtual void Consume(Queue queue) = 0;
         virtual void Connect(std::string ConnectUrl) = 0;
     };
