@@ -1,7 +1,7 @@
 #ifndef US_H
 #define US_H
 #include <map>
-#include "../Entity/UserEntity.hpp"
+#include "Cardinal/Entity/UserEntity.hpp"
 #include "MessageService.hpp"
 #include "LogService.hpp"
 

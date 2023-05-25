@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.00)
 
+SET(BASEPATH "${CMAKE_SOURCE_DIR}")
+INCLUDE_DIRECTORIES("${BASEPATH}")
+
 SET(CMAKE_CXX_STANDARD 17)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 SET(CMAKE_CXX_EXTENSIONS OFF)
@@ -15,6 +18,8 @@ file(GLOB_RECURSE SOURCES
     # Cardinal/**/*.hpp
     Cardinal/Entity/*.hpp
     Cardinal/Entity/*.cpp
+    Cardinal/Event/*.hpp
+    Cardinal/Event/*.cpp
     Cardinal/Exception/*.hpp
     Cardinal/Exception/*.cpp
     Cardinal/Service/Memory/*.hpp
@@ -28,6 +33,10 @@ file(GLOB_RECURSE SOURCES
     Cardinal/Service/Message/*.hpp
     Cardinal/Global/DI.hpp
     Cardinal/Global/DI.cpp
+    Cardinal/Component/Message/*.hpp
+    Cardinal/Component/Message/*.cpp
+    Cardinal/Component/EventMap/*.hpp
+    Cardinal/Component/EventMap/*.cpp
     Cardinal/Core.cpp
     # Cardinal/**/*.cpp
     application.cpp

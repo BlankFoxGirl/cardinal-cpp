@@ -3,7 +3,7 @@
 #define CARDINAL_LOGCLIENT_H
 #include <string>
 #include <iostream>
-#include "../LogService.hpp"
+#include "Cardinal/Service/LogService.hpp"
 
 namespace Cardinal::Service::Log {
     class LogClient: public Cardinal::Service::LogServiceInterface {

@@ -1,7 +1,7 @@
 #ifndef CARDINAL_COMPONENT_MESSAGE_SEND_H
 #define CARDINAL_COMPONENT_MESSAGE_SEND_H
-#include "../../Service/LogService.hpp"
-#include "../../Service/MessageService.hpp"
+#include "Cardinal/Service/LogService.hpp"
+#include "Cardinal/Service/MessageService.hpp"
 
 namespace Cardinal::Component::Message {
     class Send {

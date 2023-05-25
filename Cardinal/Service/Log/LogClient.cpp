@@ -167,6 +167,8 @@ string LogClient::GetTimeStampUTC()
     ptm = gmtime ( &rawtime );
     char output[80];
     strftime(output, 80, "%Y-%m-%dT%H:%M:%SZ", ptm);
+
+    // delete ptm;
     // print current time in a formatted way
     return "[" + (string)output + "]";
 }

@@ -1,8 +1,8 @@
 #include "Send.hpp"
-#include "../../Exception/Exceptions.h"
-#include "../../Service/LogService.hpp"
-#include "../../Service/MessageService.hpp"
-#include "../../Entity/Message.hpp"
+#include "Cardinal/Exception/Exceptions.h"
+#include "Cardinal/Service/LogService.hpp"
+#include "Cardinal/Service/MessageService.hpp"
+#include "Cardinal/Entity/Message.hpp"
 
 using namespace Cardinal::Component::Message;
 
@@ -13,5 +13,6 @@ int Send::invoke(void* args) {
     this->messageService.Dispatch(*message);
     this->logService.Debug("Message sent!");
     this->logService.Verbose("[Closed] Cardinal::Component::Message::Send::invoke");
+    delete message;
     return 0;
 };

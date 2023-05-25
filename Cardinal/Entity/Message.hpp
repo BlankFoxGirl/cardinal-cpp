@@ -2,7 +2,7 @@
 #define CARDINAL_ENTITY_MESSAGE_H
 
 #include "AbstractEntity.h"
-#include "../Exception/InvalidMessage.h"
+#include "Cardinal/Exception/InvalidMessage.h"
 #include <string>
 
 namespace Cardinal::Entity {
@@ -47,7 +47,7 @@ namespace Cardinal::Entity {
                 return compiledMessage;
             }
 
-            Message* Decompile(std::string raw) {
+            void Decompile(std::string raw) {
                 if (raw.empty()) {
                     throw Cardinal::Exception::InvalidMessage();
                 }
@@ -77,8 +77,6 @@ namespace Cardinal::Entity {
                     pos = raw.find(delimiter);
                     i++;
                 }
-
-                return this;
             }
 
         private:

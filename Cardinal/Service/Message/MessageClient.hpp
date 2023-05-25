@@ -1,22 +1,29 @@
 #ifndef CARDINAL_MESSAGECLIENT_H
 #define CARDINAL_MESSAGECLIENT_H
 #include <string>
-#include "../MessageService.hpp"
+#include "Cardinal/Service/MessageService.hpp"
+#include "Cardinal/Service/LogService.hpp"
 #include <sw/redis++/redis++.h>
-
+extern sw::redis::Subscriber MessageSubscribers;
 namespace Cardinal::Service::Message {
     class MessageClient: public Cardinal::Service::MessageServiceInterface {
         public:
-            MessageClient ();
+            explicit MessageClient(Cardinal::Service::LogServiceInterface* logService): logService(logService), subscriber(nullptr){};
 
             void Dispatch(Cardinal::Entity::Message message);
-            void SubscribeAndConsume(Cardinal::Service::Queue queue);
-            void Consume(Cardinal::Service::Queue queue);
+            void* SubscribeAndConsume(Cardinal::Service::Queue queue);
+            void* Consume(Cardinal::Service::Queue queue);
             void Connect(std::string ConnectUrl);
-        private:
-            // static reference to the message server?
-            static sw::redis::Redis redis;
+            void Connect(std::string Hostname, std::string Port, std::string Protocol = "tcp");
+            void ConsumeAllLoop();
+            void ConsumeAllLoop(void* &subscribers);
             static std::vector<sw::redis::Subscriber*> subscribers;
+        private:
+            Cardinal::Service::LogServiceInterface* logService;
+            void Subscribe(Cardinal::Service::Queue queue);
+            // static reference to the message server?
+            sw::redis::Redis redis;
+            std::unique_ptr<sw::redis::Subscriber> subscriber;
     };
 }
 

@@ -1,6 +1,6 @@
 #ifndef CARDINAL_SERVICE_MEMORY_REDISCACHECLIENT_H
 #define CARDINAL_SERVICE_MEMORY_REDISCACHECLIENT_H
-#include "../MemoryService.hpp"
+#include "Cardinal/Service/MemoryService.hpp"
 #include <sw/redis++/redis++.h>
 
 namespace Cardinal::Service::Memory {

@@ -1,21 +1,17 @@
 
-#include "../Service/Services.hpp"
-#include "../Service/Log/LogClient.hpp"
-#include "../Service/Message/MessageClient.hpp"
-#include "../../vendor/boost/di.hpp"
+#include "Cardinal/Service/Services.hpp"
+#include "Cardinal/Service/Log/LogClient.hpp"
+#include "Cardinal/Service/Message/MessageClient.hpp"
+#include "vendor/boost/di.hpp"
 #include "DI.hpp"
-#include "../Core.hpp"
+#include "Cardinal/Core.hpp"
 
 namespace di = boost::di;
 using namespace Cardinal::Service;
 
-// template <typename T>
 Cardinal::Global::DI::DI() {
     this->Init();
-    // instance = this;
 };
-
-// DI::~DI() {};
 
 void Cardinal::Global::DI::Init() {
     auto injector = di::make_injector(

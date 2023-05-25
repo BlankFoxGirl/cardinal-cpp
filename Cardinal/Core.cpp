@@ -8,6 +8,10 @@
 // #include "Service/CommunicationService.hpp"
 // #include "Service/UserService.hpp"
 // #include "Event/Events.h"
+#include "Component/Message/Receive.hpp"
+#include "Component/EventMap/EventMap.hpp"
+#include "Event/TestEvent.hpp"
+
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -24,9 +28,13 @@ void Core::Init() {
 
     if (this->is_listener) {
         this->StartListener();
+        this->StartLoop();
+        return;
     } else {
         this->StartWorker();
     }
+
+    Cardinal::Component::EventMap::EventMap::Register<Cardinal::Event::TestEvent>();
 
     this->StartLoop();
 }
@@ -112,17 +120,50 @@ string Core::LoadEnvironmentVariable(string key, string default_value) {
     return value;
 }
 
-void Core::StartWorker() {
+// Only supports 1 worker per channel presently. This will likely need to change.
+void* Core::StartWorker() {
     this->logService_.Verbose("Called StartWorker");
     this->logService_.Info("Initiating Worker");
 
-    this->logService_.Debug("Registering events...");
+    // this->logService_.Debug("Registering events...");
     // Cardinal::Event::TestEvent *t = new Cardinal::Event::TestEvent(this->logService_);
     // this->eventMapService_.Register("TestEvent", t);
-    this->logService_.Debug("Events registered!");
-    this->logService_.Debug("Subscribing to Redis channel 'test'");
-    // this->redisService_.SubscribeEvent("test");
+    // this->logService_.Debug("Events registered!");
+
+    Cardinal::Service::Queue q;
+    q.Name = "test";
+    this->logService_.Debug("Subscribing to Redis channel ", q.Name);
+
+    q.Callback = [this](std::string raw) {
+        this->logService_.Verbose("[Called] WorkerCallback");
+        this->logService_.Debug("--Received raw message", raw);
+
+        if (raw.empty()) {
+            this->logService_.Debug("--Raw message is empty, exiting callback");
+            this->logService_.Verbose("[Closed] WorkerCallback");
+            return;
+        }
+
+        try {
+            Cardinal::Entity::Message message = Cardinal::Entity::Message(raw);
+            this->logService_.Debug("--Received message", message.getPayload());
+            this->logService_.Verbose("--Instantiating Message Component...");
+            Cardinal::Component::Message::Receive r = Cardinal::Component::Message::Receive(this->logService_, this->messageService_);
+            this->logService_.Verbose("--Message component instantiated successfully!");
+            this->logService_.Verbose("--Call Message Component Invoker with", message.getUUID() + ": " + message.getKey() + "->" + message.getPayload());
+            r(message); // Invoke the message component with the received message.
+        } catch (Cardinal::Exception::InvalidMessage& e) {
+            this->logService_.Error("Invalid message received", e.what());
+        } catch (std::exception& e) {
+            this->logService_.Error("Error occurred when attempting to process message in worker.", e.what());
+        }
+
+        this->logService_.Verbose("[Closed] WorkerCallback");
+    };
+
+    auto resp = this->messageService_.SubscribeAndConsume(q);
     this->logService_.Debug("Subscribed to channel 'test'");
+    return resp;
 }
 
 void Core::StartListener() {
@@ -149,10 +190,28 @@ void Core::StartLoop() {
     }
 }
 
+void Core::StartLoop(void* &params) {
+    this->logService_.Verbose("Called StartLoop with Params");
+    this->Active = true;
+    if (this->dryRun) {
+        this->logService_.Warning("Dry run enabled. Exiting.");
+        this->logService_.Verbose("Exiting in StartLoap due to DryRun");
+        exit(0);
+    }
+
+    this->logService_.Verbose("StartLoop is calling Loop");
+    while (this->Active && !this->dryRun) {
+        usleep(1);
+        this->Loop(params);
+    }
+
+    this->logService_.Verbose("StartLoop Closed Loop");
+}
+
 void Core::StartRedis() {
     this->logService_.Verbose("Called StartRedis");
     this->logService_.Info("Starting Redis...");
-    // this->redisService_.Connect(this->REDIS_HOST, this->REDIS_PORT);
+    this->messageService_.Connect(this->REDIS_HOST, this->REDIS_PORT);
     this->logService_.Info("Redis started!");
 }
 
@@ -164,10 +223,27 @@ void Core::Loop() {
     }
 }
 
+void Core::Loop(void* &params) {
+    this->logService_.Verbose("Called Loop with Params");
+    if (this->is_listener) {
+        this->ListenerLoop();
+    } else {
+        this->logService_.Verbose("Loop is calling WorkerLoop with Params");
+        this->WorkerLoop(params);
+    }
+}
+
 void Core::ListenerLoop() {
     // this->tcpListenerService_.Accept();
 }
 
 void Core::WorkerLoop() {
-    // this->redisService_.Consume();
+    this->messageService_.ConsumeAllLoop();
+}
+
+void Core::WorkerLoop(void* &params) {
+    this->logService_.Verbose("Called WorkerLoop with Params");
+    this->logService_.Verbose("Calling ConsumeAllLoop on Message Service with Params");
+    this->messageService_.ConsumeAllLoop(params);
+    this->logService_.Verbose("WorkerLoop Closed ConsumeAllLoop");
 }

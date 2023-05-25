@@ -1,13 +1,11 @@
-// #include <string>
-// #include "AbstractEvent.h"
+#include <string>
+#include "AbstractEvent.hpp"
 
-// using namespace std;
-// using namespace Cardinal::Event;
+using namespace Cardinal::Event;
 
 // AbstractEvent::AbstractEvent() {}
 
-// bool AbstractEvent::invoke(std::string Payload) {
-//     // Do nothing. This gets overridden.
-//     cout << "Called AE Invoke instead" << endl;
-//     return true;
+// std::string AbstractEvent::SetEventKey(std::string eventKey) {
+//     this->eventKey = eventKey;
+//     return this->eventKey;
 // }

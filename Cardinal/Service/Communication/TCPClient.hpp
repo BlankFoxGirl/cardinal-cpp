@@ -18,10 +18,10 @@
 #include <cstring>
 #include <signal.h>
 #include <arpa/inet.h>
-#include "LogService.h"
+#include "LogService.hpp"
 #include "UserService.hpp"
-#include "RedisClient.h"
-#include "../Exception/Exceptions.h"
+#include "MessageService.hpp"
+#include "Cardinal/Exception/Exceptions.h"
 
 using namespace std;
 

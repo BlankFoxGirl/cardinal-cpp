@@ -3,39 +3,53 @@
 #include <string>
 #include <map>
 #include <iostream>
-#include "../Exception/Exceptions.h"
-#include "../Event/AbstractEvent.h"
-#include "../../Service/MessageService.hpp"
-#include "../../Service/LogService.hpp"
+#include "Cardinal/Exception/Exceptions.h"
+#include "Cardinal/Event/AbstractEvent.hpp"
+#include "Cardinal/Service/MessageService.hpp"
+#include "Cardinal/Service/LogService.hpp"
 
 using namespace std;
 using namespace Cardinal::Event;
 using namespace Cardinal::Exception;
-// using namespace Cardinal::Global;
+
+
 
 namespace Cardinal::Component::EventMap {
-    typedef map<string, Cardinal::Event::AbstractEvent*> eventObject;
+    typedef Cardinal::Event::AbstractEvent* (*FactoryType)();
+    typedef map<string, FactoryType> eventObject;
 
     class EventMap {
         public:
             explicit EventMap(Cardinal::Service::LogServiceInterface& s): logService_(s) {
-                this->logService_.Info("Starting EventMapService");
+                this->logService_.Info("[Initialising] Cardinal::Component::EventMap");
             }
-            void Invoke (string channel, string message);
 
-            void Register (string eventName, Cardinal::Event::AbstractEvent *eventObject);
+            ~EventMap()  {
+                this->logService_.Info("[Destroying] Cardinal::Component::EventMap");
+            }
+
+            void Invoke (Cardinal::Entity::Message message);
+
+            // static void Register (Cardinal::Event::AbstractEvent *eventObject);
+            template <typename T> static void Register () {
+                EventMap::events.insert(
+                    pair<std::string, std::map<std::string, FactoryType>::mapped_type>(
+                        (std::string)T::GetEventKey(),
+                        (FactoryType)T::Create
+                    )
+                );
+            }
+            static EventMap* Create(Cardinal::Service::LogServiceInterface& logService) {
+                return new EventMap(logService);
+            }
 
         private:
             Cardinal::Service::LogServiceInterface& logService_;
-            eventObject events;
-
-            std::__1::tuple<std::__1::string, std::__1::string> RetrieveEventFromMessage (string message);
-
-            void RetrieveAndInvokeEventObjectFromMessage(string Message);
+            static eventObject events;
 
             void RetrieveAndInvokeEventObject(string EventName, string Payload);
 
-            Cardinal::Event::AbstractEvent* GetEventObject (string eventName) {
+            FactoryType GetEventObject (string eventName) {
                 try {
                     auto receivedEventObject = events.at(eventName);
                     return receivedEventObject;

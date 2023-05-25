@@ -1,5 +1,5 @@
 #include <string>
-#include "../../vendor/crashoz/uuid_v4/uuid_v4.h"
+#include "vendor/crashoz/uuid_v4/uuid_v4.h"
 #include "AbstractEntity.h"
 
 using namespace std;

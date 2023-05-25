@@ -1,57 +1,61 @@
 #include <string>
 #include <map>
-#include "../../Exception/Exceptions.h"
-#include "../../Event/AbstractEvent.h"
+#include <typeinfo>
+#include "Cardinal/Exception/Exceptions.h"
+#include "Cardinal/Event/AbstractEvent.hpp"
 
 #include "EventMap.hpp"
-#include "../../Service/MessageService.hpp"
-#include "../../Service/LogService.hpp"
+#include "Cardinal/Service/LogService.hpp"
+#include "Cardinal/Entity/Message.hpp"
 
 using namespace Cardinal::Component::EventMap;
 
-void EventMap::Invoke (std::string channel, std::string message) {
-    this->logService_.Verbose("Called EventMap");
+
+void EventMap::Invoke (Cardinal::Entity::Message message) {
+    this->logService_.Verbose("[Called] Cardinal::Component::EventMap::Invoke");
     try {
-        this->RetrieveAndInvokeEventObjectFromMessage(message);
+        this->logService_.Verbose("--Cardinal::Component::EventMap::Invoke Retrieving and Invoking Event Object");
+        this->RetrieveAndInvokeEventObject(message.getKey(), message.getPayload());
+        this->logService_.Verbose("--Cardinal::Component::EventMap::Invoke Completed!");
     } catch (Cardinal::Exception::InvalidOrMissingEvent& e) {
-        this->logService_.Info("EventMap::Invoke", "Invalid or missing event " + message + " Channel: " + channel);
+        this->logService_.Warning(
+            "--Cardinal::Component::EventMap::Invoke",
+            "Invalid or missing event " + message.getPayload() + " Channel: " + message.getKey()
+        );
+
+        this->logService_.Debug(
+            "--Could it be that the event you're calling hasn't been registered? Event: " + message.getKey(),
+            std::to_string(EventMap::events.size())
+        );
     } catch (Cardinal::Exception::InvalidMessage& e) {
-        this->logService_.Warning("EventMap::Invoke", "Invalid message " + message + " Channel: " + channel);
+        this->logService_.Warning(
+            "--Cardinal::Component::EventMap::Invoke",
+            "Invalid message " + message.getPayload() + " Channel: " + message.getKey()
+        );
     }
-}
-
-void EventMap::Register (std::string eventName, Cardinal::Event::AbstractEvent *eventObject) {
-    this->logService_.Debug("EventMap::Register", "Registered " + eventName);
-    events.insert(pair<std::string, std::map<std::string, Cardinal::Event::AbstractEvent *>::mapped_type>(eventName, eventObject));
-}
-
-
-std::__1::tuple<std::__1::string, std::__1::string> EventMap::RetrieveEventFromMessage (std::string message) {
-    // ToDo: Hook up to message service.
-    // Cardinal::Service::MessageService messageService = Cardinal::Service::MessageService(message);
-    // return messageService.Decode();
-    return std::make_tuple("test", "test");
-}
-
-void EventMap::RetrieveAndInvokeEventObjectFromMessage(std::string Message) {
-    this->logService_.Verbose("EventMap::RetrieveAndInvokeEventObjectFromMessage", "Called");
-    auto [eventName, payload] = this->RetrieveEventFromMessage(Message);
-
-    this->logService_.Debug(
-        "EventMap::RetrieveAndInvokeEventObjectFromMessage",
-        "Received " + (std::string)eventName + " " + (std::string)payload
-    );
-
-    this->RetrieveAndInvokeEventObject(eventName, payload);
+    this->logService_.Verbose("[Closed] Cardinal::Component::EventMap::Invoke");
 }
 
 void EventMap::RetrieveAndInvokeEventObject(std::string EventName, std::string Payload) {
+    this->logService_.Verbose("[Called] Cardinal::Component::EventMap::RetrieveAndInvokeEventObject");
     try {
-        auto receivedEventObject = events.at(EventName);
+        this->logService_.Verbose("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject retrieving event from registered events.");
+        auto* factory = events.at(EventName)();
+        this->logService_.Verbose("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject cloning event into scope...");
+        auto* receivedEventObject = factory->Clone(this->logService_);
+
+        delete factory;
+
+        this->logService_.Verbose("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject invoking event...");
         receivedEventObject->invoke(Payload);
+        this->logService_.Verbose("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject event invoked.");
+        delete receivedEventObject;
+
     } catch (std::exception& e) {
+        this->logService_.Error("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject", "Failed to execute event.");
         throw Cardinal::Exception::InvalidOrMissingEvent();
     }
+    this->logService_.Verbose("[Closed] Cardinal::Component::EventMap::RetrieveAndInvokeEventObject");
 }
 
-// static eventObject EventMap::events;
+eventObject EventMap::events;

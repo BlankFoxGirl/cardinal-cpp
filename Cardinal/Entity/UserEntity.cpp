@@ -1,7 +1,7 @@
 #include "AbstractEntity.h"
 #include "PlayerEntity.hpp"
 #include "UserEntity.hpp"
-// #include "../Service/TCPListenerService.h"
+// #include "Cardinal/Service/TCPListenerService.h"
 
 using Cardinal::Entity::UserEntity;
 Cardinal::Entity::UserEntity::UserEntity() {
