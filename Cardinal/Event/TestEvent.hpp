@@ -19,12 +19,12 @@ namespace Cardinal::Event {
                 return true;
             }
 
-            virtual TestEvent* Clone(Cardinal::Service::LogServiceInterface& s) override {
-                return new TestEvent(s);
+            virtual std::unique_ptr<AbstractEvent> Clone(Cardinal::Service::LogServiceInterface& s) override {
+                return std::make_unique<TestEvent>(s);
             }
 
-            static AbstractEvent* Create(Cardinal::Service::LogServiceInterface& s) {
-                return new TestEvent(s);
+            static std::unique_ptr<AbstractEvent> Create(Cardinal::Service::LogServiceInterface& s) {
+                return std::make_unique<TestEvent>(s);
             }
 
             static std::string GetEventKey() {

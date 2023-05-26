@@ -33,8 +33,16 @@ int Receive::operator()(Cardinal::Entity::Message message) {
 
 void Receive::InvokeEventMap() {
     this->logService.Verbose("[Called] Cardinal::Component::Message::Receive::InvokeEventMap");
-    Cardinal::Component::EventMap::EventMap* eventMap = Cardinal::Component::EventMap::EventMap::Create(this->logService);
-    eventMap->Invoke(this->message);
-    delete eventMap;
+
+    try {
+        this->logService.Verbose("--Cardinal::Component::Message::Receive::InvokeEventMap instantiating event map component.");
+        auto eventMap = Cardinal::Component::EventMap::EventMap::Create(this->logService);
+        this->logService.Verbose("--Cardinal::Component::Message::Receive::InvokeEventMap Invoking event map component.");
+        eventMap->Invoke(this->message);
+        this->logService.Verbose("--Cardinal::Component::Message::Receive::InvokeEventMap done.");
+    } catch (std::exception& e) {
+        this->logService.Error("--Cardinal::Component::Message::Receive::InvokeEventMap", "Failed to execute event.");
+    }
+
     this->logService.Verbose("[Closed] Cardinal::Component::Message::Receive::InvokeEventMap");
 }

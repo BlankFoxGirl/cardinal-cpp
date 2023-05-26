@@ -15,7 +15,7 @@ using namespace Cardinal::Exception;
 
 
 namespace Cardinal::Component::EventMap {
-    typedef Cardinal::Event::AbstractEvent* (*FactoryType)();
+    typedef std::unique_ptr<Cardinal::Event::AbstractEvent> (*FactoryType)();
     typedef map<string, FactoryType> eventObject;
 
     class EventMap {
@@ -24,7 +24,7 @@ namespace Cardinal::Component::EventMap {
                 this->logService_.Info("[Initialising] Cardinal::Component::EventMap");
             }
 
-            ~EventMap()  {
+            ~EventMap() {
                 this->logService_.Info("[Destroying] Cardinal::Component::EventMap");
             }
 
@@ -39,8 +39,13 @@ namespace Cardinal::Component::EventMap {
                     )
                 );
             }
-            static EventMap* Create(Cardinal::Service::LogServiceInterface& logService) {
-                return new EventMap(logService);
+
+            static std::unique_ptr<EventMap> Create(Cardinal::Service::LogServiceInterface& logService) {
+                return std::make_unique<EventMap>(logService);
+            }
+
+            void Destroy() {
+                delete this;
             }
 
         private:

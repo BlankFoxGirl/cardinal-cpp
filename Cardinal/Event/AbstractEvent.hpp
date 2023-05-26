@@ -15,13 +15,14 @@ namespace Cardinal::Event {
                 return true;
             }
 
-            virtual AbstractEvent* Clone(Cardinal::Service::LogServiceInterface& logService) {
-                return new AbstractEvent();
+            virtual std::unique_ptr<AbstractEvent> Clone(Cardinal::Service::LogServiceInterface& logService) {
+                return std::make_unique<AbstractEvent>();
+                // return new AbstractEvent();
             }
 
             template <typename... Args>
-            static AbstractEvent* Create(Args... args) {
-                return new AbstractEvent();
+            static std::unique_ptr<AbstractEvent> Create(Args... args) {
+                return std::make_unique<AbstractEvent>();
             }
 
             static std::string GetEventKey() {

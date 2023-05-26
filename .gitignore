@@ -3,3 +3,4 @@ vendor/**
 build/**
 !build/empty
 .vscode
+.cache

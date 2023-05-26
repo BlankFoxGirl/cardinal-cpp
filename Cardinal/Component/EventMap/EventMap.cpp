@@ -40,21 +40,19 @@ void EventMap::RetrieveAndInvokeEventObject(std::string EventName, std::string P
     this->logService_.Verbose("[Called] Cardinal::Component::EventMap::RetrieveAndInvokeEventObject");
     try {
         this->logService_.Verbose("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject retrieving event from registered events.");
-        auto* factory = events.at(EventName)();
+        auto factory = events.at(EventName)();
         this->logService_.Verbose("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject cloning event into scope...");
-        auto* receivedEventObject = factory->Clone(this->logService_);
-
-        delete factory;
+        auto receivedEventObject = factory->Clone(this->logService_);
 
         this->logService_.Verbose("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject invoking event...");
         receivedEventObject->invoke(Payload);
         this->logService_.Verbose("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject event invoked.");
-        delete receivedEventObject;
 
     } catch (std::exception& e) {
         this->logService_.Error("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject", "Failed to execute event.");
         throw Cardinal::Exception::InvalidOrMissingEvent();
     }
+    // Factory and Event both deleted here.
     this->logService_.Verbose("[Closed] Cardinal::Component::EventMap::RetrieveAndInvokeEventObject");
 }
 

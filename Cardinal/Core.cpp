@@ -121,14 +121,9 @@ string Core::LoadEnvironmentVariable(string key, string default_value) {
 }
 
 // Only supports 1 worker per channel presently. This will likely need to change.
-void* Core::StartWorker() {
+void Core::StartWorker() {
     this->logService_.Verbose("Called StartWorker");
     this->logService_.Info("Initiating Worker");
-
-    // this->logService_.Debug("Registering events...");
-    // Cardinal::Event::TestEvent *t = new Cardinal::Event::TestEvent(this->logService_);
-    // this->eventMapService_.Register("TestEvent", t);
-    // this->logService_.Debug("Events registered!");
 
     Cardinal::Service::Queue q;
     q.Name = "test";
@@ -148,7 +143,7 @@ void* Core::StartWorker() {
             Cardinal::Entity::Message message = Cardinal::Entity::Message(raw);
             this->logService_.Debug("--Received message", message.getPayload());
             this->logService_.Verbose("--Instantiating Message Component...");
-            Cardinal::Component::Message::Receive r = Cardinal::Component::Message::Receive(this->logService_, this->messageService_);
+            auto r = Cardinal::Component::Message::Receive(this->logService_, this->messageService_);
             this->logService_.Verbose("--Message component instantiated successfully!");
             this->logService_.Verbose("--Call Message Component Invoker with", message.getUUID() + ": " + message.getKey() + "->" + message.getPayload());
             r(message); // Invoke the message component with the received message.
@@ -161,9 +156,8 @@ void* Core::StartWorker() {
         this->logService_.Verbose("[Closed] WorkerCallback");
     };
 
-    auto resp = this->messageService_.SubscribeAndConsume(q);
+    this->messageService_.SubscribeAndConsume(q);
     this->logService_.Debug("Subscribed to channel 'test'");
-    return resp;
 }
 
 void Core::StartListener() {

@@ -30,8 +30,6 @@ namespace Cardinal {
                 this->Init();
             }
 
-            template <typename T> static void RegisterEvent();
-
         private:
             Cardinal::Service::LogServiceInterface& logService_;
             Cardinal::Service::MessageServiceInterface& messageService_;
@@ -66,7 +64,7 @@ namespace Cardinal {
 
             string LoadEnvironmentVariable(string key, string default_value = "");
 
-            void* StartWorker();
+            void StartWorker();
 
             void StartListener();
 
