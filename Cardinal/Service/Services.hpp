@@ -5,6 +5,6 @@
 #include "MessageService.hpp"
 #include "MemoryService.hpp"
 // #include "StorageService.hpp"
-// #include "CommunicationService.hpp"
+#include "CommunicationService.hpp"
 
 #endif

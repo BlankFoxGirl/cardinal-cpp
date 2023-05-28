@@ -2,7 +2,6 @@
 #include "Cardinal/Exception/TCPSocketCreationException.h"
 #include "Cardinal/Exception/TCPSocketBindException.h"
 #include "Cardinal/Exception/TCPSocketListenException.h"
-#include "Cardinal/Entity/UserEntity.hpp"
 #include <iostream>
 #include <vector>
 #include <sys/poll.h>
@@ -23,7 +22,7 @@
 
 using namespace std;
 
-using namespace Cardinal::Service;
+using namespace Cardinal::Service::Communication;
 
 typedef void *(*THREADFUNCPTR)(void *);
 pthread_t thread_tcp[100], thread_file[10];
@@ -36,37 +35,37 @@ struct msg
     char file[2048];
 };
 
-void TCPListenerService::Bind(string port, char *address)
+void TCPClient::Bind(string port, char *address)
 {
-    this->logService_.Verbose("[Called] TCPListenerService::Bind");
+    this->logService_.Verbose("[Called] TCPClient::Bind");
     // Specified Port!
     this->Port = stoi(port);
 
     // Specified Address!
     this->Address = inet_pton(AF_INET, address, NULL);
-    this->logService_.Verbose("[Closed] TCPListenerService::Bind");
+    this->logService_.Verbose("[Closed] TCPClient::Bind");
 }
 
-void TCPListenerService::Bind(string port, string address)
+void TCPClient::Bind(string port, string address)
 {
-    this->logService_.Verbose("[Called] TCPListenerService::Bind");
+    this->logService_.Verbose("[Called] TCPClient::Bind");
     // Specified Port!
-    this->logService_.Verbose("--TCPListenerService::Bind Set Port");
+    this->logService_.Verbose("--TCPClient::Bind Set Port");
     this->Port = stoi(port);
 
     // Specified Address!
-    this->logService_.Verbose("--TCPListenerService::Bind Convert Str to Const Char*");
+    this->logService_.Verbose("--TCPClient::Bind Convert Str to Const Char*");
     const char* addressChar = address.c_str();
     
-    this->logService_.Verbose("--TCPListenerService::Bind Set Address");
+    this->logService_.Verbose("--TCPClient::Bind Set Address");
     inet_pton(AF_INET, addressChar, &this->Address);
-    this->logService_.Verbose("--TCPListenerService::Bind Complete");
-    this->logService_.Verbose("[Closed] TCPListenerService::Bind");
+    this->logService_.Verbose("--TCPClient::Bind Complete");
+    this->logService_.Verbose("[Closed] TCPClient::Bind");
 }
 
-void TCPListenerService::Start()
+void TCPClient::Start()
 {
-    this->logService_.Verbose("[Called] TCPListenerService::Start");
+    this->logService_.Verbose("[Called] TCPClient::Start");
     sockaddr_in clientaddr; // client address
     sockaddr_in serverAddress = ConfigureServerAddress();
     socklen_t addrlen = sizeof(clientaddr);
@@ -80,55 +79,55 @@ void TCPListenerService::Start()
 
     this->logService_.Info("Server is listening on port ", to_string(this->Port));
     SetSocketData(clientaddr, addrlen);
-    this->logService_.Verbose("[Closed] TCPListenerService::Start");
+    this->logService_.Verbose("[Closed] TCPClient::Start");
 }
 
-void TCPListenerService::ListenForConnections()
+void TCPClient::ListenForConnections()
 {
-    this->logService_.Verbose("[Called] TCPListenerService::ListenForConnections");
+    this->logService_.Verbose("[Called] TCPClient::ListenForConnections");
     if ((listen(this->mistfd, 5)) != 0)
     {
         throw Cardinal::Exception::TCPSocketListenException();
     }
-    this->logService_.Verbose("[Closed] TCPListenerService::ListenForConnections");
+    this->logService_.Verbose("[Closed] TCPClient::ListenForConnections");
 }
 
-void TCPListenerService::BindServerAddressAndPort(sockaddr_in serverAddress)
+void TCPClient::BindServerAddressAndPort(sockaddr_in serverAddress)
 {
-    this->logService_.Verbose("[Called] TCPListenerService::BindServerAddressAndPort");
+    this->logService_.Verbose("[Called] TCPClient::BindServerAddressAndPort");
     if (::bind(this->mistfd, (sockaddr *)&serverAddress, sizeof(serverAddress)) == -1)
     {
         throw Cardinal::Exception::TCPSocketBindException();
     }
-    this->logService_.Verbose("[Closed] TCPListenerService::BindServerAddressAndPort");
+    this->logService_.Verbose("[Closed] TCPClient::BindServerAddressAndPort");
 }
 
-void TCPListenerService::StoreServerAddressInMemory(sockaddr_in serverAddress)
+void TCPClient::StoreServerAddressInMemory(sockaddr_in serverAddress)
 {
-    this->logService_.Verbose("[Called] TCPListenerService::StoreServerAddressInMemory");
+    this->logService_.Verbose("[Called] TCPClient::StoreServerAddressInMemory");
     memset((sockaddr *)&serverAddress, 0, sizeof(serverAddress));
-    this->logService_.Verbose("[Closed] TCPListenerService::StoreServerAddressInMemory");
+    this->logService_.Verbose("[Closed] TCPClient::StoreServerAddressInMemory");
 }
 
-void TCPListenerService::SetSignalHandlers()
+void TCPClient::SetSignalHandlers()
 {
-    this->logService_.Verbose("[Called] TCPListenerService::SetSignalHandlers");
-    signal(SIGINT, TCPListenerService::sig_handler);
-    signal(SIGTSTP, TCPListenerService::sig_handler);
-    this->logService_.Verbose("[Closed] TCPListenerService::SetSignalHandlers");
+    this->logService_.Verbose("[Called] TCPClient::SetSignalHandlers");
+    signal(SIGINT, TCPClient::sig_handler);
+    signal(SIGTSTP, TCPClient::sig_handler);
+    this->logService_.Verbose("[Closed] TCPClient::SetSignalHandlers");
 }
 
-void TCPListenerService::SetSocketData(sockaddr_in &clientaddr, socklen_t &addrlen)
+void TCPClient::SetSocketData(sockaddr_in &clientaddr, socklen_t &addrlen)
 {
-    this->logService_.Verbose("[Called] TCPListenerService::SetSocketData");
+    this->logService_.Verbose("[Called] TCPClient::SetSocketData");
     this->clientaddr = clientaddr;
     this->addrlen = addrlen;
-    this->logService_.Verbose("[Closed] TCPListenerService::SetSocketData");
+    this->logService_.Verbose("[Closed] TCPClient::SetSocketData");
 }
 
-void TCPListenerService::Accept()
+void TCPClient::Accept()
 {
-    this->logService_.Verbose("[Called] TCPListenerService::Accept");
+    this->logService_.Verbose("[Called] TCPClient::Accept");
     int connfd;
     if ((connfd = accept(this->mistfd, (sockaddr *)&this->clientaddr, &this->addrlen)) < 0)
     {
@@ -154,108 +153,71 @@ void TCPListenerService::Accept()
     {
         threadno_tcp = 0;
     }
-    delete r;
-    this->logService_.Verbose("[Closed] TCPListenerService::Accept");
+
+    this->logService_.Verbose("[Closed] TCPClient::Accept");
 }
 
-void *TCPListenerService::Connection(void *args)
+void *TCPClient::Connection(void *args)
 {
     // Map args to tuple
-    std::tuple<TCPListenerService*, req*> arg = *reinterpret_cast<std::tuple<TCPListenerService*, req*>*>(args);
+    std::tuple<TCPClient*, req*> arg = *reinterpret_cast<std::tuple<TCPClient*, req*>*>(args);
 
     // Extract first element of tuple args
     auto t = std::get<0>(arg);
 
     // Extract second element of tuple args
     auto c = std::get<1>(arg);
+    reinterpret_cast<TCPClient*>(t)->CallCallbackByName("OnConnection", c);
 
-    return reinterpret_cast<TCPListenerService*>(t)->LocalConnection(c);
+    return c;
 }
 
-void *TCPListenerService::LocalConnection(void *args)
+void TCPClient::CallCallbackByName(std::string CallbackName, void *args)
 {
-    this->logService_.Verbose("[Called] TCPListenerService::LocalConnection");
-    req sock = *((req *)args);
-    msg buffer;
-    vector<char> buf(32); // you are using C++ not C
-    int n = 1;
-    // auto User = Cardinal::Entity::UserEntity(sock);
-    auto User = this->userService_.RegisterConnection();
-    std::string connectionUUID = User.getUUID();
-    this->logService_.Debug("Connection assigned to userUUID: " + connectionUUID);
-    timeval t;
-    t.tv_sec = 2;
-    t.tv_usec = 2000;
-
-    struct pollfd fds[200];
-    memset(fds, 0 , sizeof(fds));
-
-    /*************************************************************/
-    /* Set up the initial listening socket                        */
-    /*************************************************************/
-    fds[0].fd = sock.des;
-    fds[0].events = POLLIN;
-
-    while (n >= 0)
-    {
-        /* Read the packet sent by the established client */
-        // n = read(sock.des, &buffer, sizeof(buffer));
-        if (User.hasMessagesToBeSent()) {
-            this->logService_.Verbose("User has messages waiting to be sent.");
-            string message = User.GetMessageToSend();
-            this->logService_.Debug("Sending message " + string(message), " to userUUID: " + connectionUUID);
-            n = write(sock.des, &message, sizeof(message));
-            this->logService_.Debug("Message sent to userUUID: " + connectionUUID);
-        }
-
-        n = poll(fds, 1, 500);
-        if (n > 0)
-        {
-            this->logService_.Verbose("Data available to be read from userUUID: " + connectionUUID);
-            n = read(sock.des, buf.data(), buf.size());
-
-            if (buf.size() != 0) {
-                string data;
-                std::transform(buf.begin(), buf.end(), std::back_inserter(data),
-                [](char c)
-                {
-                    return c;
-                });
-
-                this->logService_.Debug(data);
-                User.Write(data);
-            }
-        }
+    this->logService_.Verbose("[Called] TCPClient::CallCallbackByName");
+    // 1. Get the callback from this->Callbacks
+    auto callback = this->Callbacks.find(CallbackName);
+    try {
+        this->logService_.Verbose("Calling callback: " + CallbackName);
+        // 2. Call the callback
+        callback->second(args);
+    } catch (std::exception &e) {
+        this->logService_.Error("Error calling callback: " + CallbackName, e.what());
     }
 
-    close(sock.des);
-    this->logService_.Verbose("[Closed] TCPListenerService::LocalConnection");
-    delete (req *)args;
-
-    return args;
+    this->logService_.Verbose("[Closed] TCPClient::CallCallbackByName");
 }
 
-void TCPListenerService::CreateSocketStream()
+void TCPClient::CreateSocketStream()
 {
-    this->logService_.Verbose("[Called] TCPListenerService::CreateSocketStream");
+    this->logService_.Verbose("[Called] TCPClient::CreateSocketStream");
     if ((this->mistfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
-        this->logService_.Verbose("--TCPListenerService::mistfd as a socket == -1");
+        this->logService_.Verbose("--TCPClient::mistfd as a socket == -1");
         throw Cardinal::Exception::TCPSocketCreationException();
     }
 
+    // ToDo: This should be non-blocking... But thread dies if it is.
     // fcntl(this->mistfd, F_SETFL, O_NONBLOCK);
-    this->logService_.Verbose("[Closed] TCPListenerService::CreateSocketStream");
+    this->logService_.Verbose("[Closed] TCPClient::CreateSocketStream");
 }
 
-sockaddr_in TCPListenerService::ConfigureServerAddress()
+sockaddr_in TCPClient::ConfigureServerAddress()
 {
-    this->logService_.Verbose("[Called] TCPListenerService::ConfigureServerAddress");
+    this->logService_.Verbose("[Called] TCPClient::ConfigureServerAddress");
     sockaddr_in serverAddress;                            // server address
     serverAddress.sin_family = AF_INET;                   // IPv4 address family
     serverAddress.sin_addr.s_addr = htons(this->Address); // Give the local machine address
     serverAddress.sin_port = htons(this->Port);           // Port at which server listens to the requests
-    this->logService_.Verbose("[Closed] TCPListenerService::ConfigureServerAddress");
+    this->logService_.Verbose("[Closed] TCPClient::ConfigureServerAddress");
 
     return serverAddress;
+}
+
+void TCPClient::RegisterCallback(std::string name, std::function<void(void *args)> callback)
+{
+    this->logService_.Verbose("[Called] TCPClient::RegisterCallback");
+    this->Callbacks.insert(std::pair<std::string, std::function<void(void *args)>>(name, callback));
+    this->logService_.Debug("--Callback " + name + " registered.", "Number of callbacks registered: " + std::to_string(this->Callbacks.size()));
+    this->logService_.Verbose("[Closed] TCPClient::RegisterCallback");
 }

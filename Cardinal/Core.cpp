@@ -2,14 +2,10 @@
 #include "Exception/Exceptions.h"
 #include "Service/LogService.hpp"
 #include "Core.hpp"
-// #include "Service/EventMapService.hpp"
 // #include "Service/MemoryService.hpp"
-// #include "Service/MessageService.hpp"
-// #include "Service/CommunicationService.hpp"
-// #include "Service/UserService.hpp"
-// #include "Event/Events.h"
 #include "Component/Message/Receive.hpp"
 #include "Component/EventMap/EventMap.hpp"
+#include "Component/Connection/EndUserClientConnection.hpp"
 #include "Event/TestEvent.hpp"
 
 #include <unistd.h>
@@ -33,8 +29,6 @@ void Core::Init() {
     } else {
         this->StartWorker();
     }
-
-    Cardinal::Component::EventMap::EventMap::Register<Cardinal::Event::TestEvent>();
 
     this->StartLoop();
 }
@@ -85,12 +79,35 @@ void Core::LoadRedisConfig()
 
 void Core::LoadListenerConfig()
 {
-    this->logService_.Verbose("Called LoadListenerConfig");
+    this->logService_.Verbose("[Called] LoadListenerConfig");
     this->logService_.Debug("Loading listener config...");
     string port = this->LoadEnvironmentVariable("PORT", "7777");
     string bindIp = this->LoadEnvironmentVariable("BIND_IP", "0.0.0.0");
-    // this->tcpListenerService_.Bind(port, bindIp);
+    this->communicationService_.Bind(port, bindIp);
+    this->RegisterListenerCallback();
     this->logService_.Debug("Listener config loaded!");
+    this->logService_.Verbose("[Closed] LoadListenerConfig");
+}
+
+void Core::RegisterListenerCallback()
+{
+    this->logService_.Verbose("[Called] RegisterListenerCallback");
+    this->logService_.Debug("Registering listener callback...");
+    this->communicationService_.RegisterCallback("OnConnection", [this](void *args) {
+        this->logService_.Verbose("[Called] OnConnection Callback");
+
+        Cardinal::Component::Connection::EndUserClientConnection userConnection(
+            this->logService_,
+            this->communicationService_,
+            this->messageService_
+        );
+
+        userConnection.AcceptConnection(args);
+        this->logService_.Verbose("[Closed] OnConnection Callback");
+    });
+
+    this->logService_.Debug("Listener callback registered!");
+    this->logService_.Verbose("[Closed] RegisterListenerCallback");
 }
 
 void Core::LoadListenerToggle() {
@@ -162,11 +179,11 @@ void Core::StartWorker() {
 
 void Core::StartListener() {
     this->logService_.Verbose("Called StartListener");
-    this->logService_.Info("Initiating Listener");
+    this->logService_.Info("Initiating Communication Service Listener");
     this->LoadListenerConfig();
-    this->logService_.Info("Starting TCP Listener Service...");
-    // this->tcpListenerService_.Start();
-    this->logService_.Info("TCP Listener Service started!");
+    this->logService_.Info("Starting Communication Service...");
+    this->communicationService_.Start();
+    this->logService_.Info("Communication Service started!");
 }
 
 void Core::StartLoop() {
@@ -228,7 +245,7 @@ void Core::Loop(void* &params) {
 }
 
 void Core::ListenerLoop() {
-    // this->tcpListenerService_.Accept();
+    this->communicationService_.Accept();
 }
 
 void Core::WorkerLoop() {

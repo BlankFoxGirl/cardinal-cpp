@@ -6,6 +6,8 @@
 #include "LogService.hpp"
 
 namespace Cardinal::Service {
+    // @deprecated This is being refactored into a Cardinal::Component.
+    // @dontinclude This is not used.
     class UserServiceInterface {
         public:
             ~UserServiceInterface() = default;
@@ -15,6 +17,8 @@ namespace Cardinal::Service {
             virtual void SendToUser(string userUUID, string message) = 0;
     };
 
+    // @deprecated This is being refactored into a Cardinal::Component.
+    // @dontinclude This is not used.
     class UserService: public UserServiceInterface {
         public:
             explicit UserService(Cardinal::Service::CacheClientInterface& s, Cardinal::Service::LogServiceInterface& s1): redisService_(s), logService_(s1) {};

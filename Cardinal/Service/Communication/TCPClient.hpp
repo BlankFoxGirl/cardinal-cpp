@@ -17,43 +17,29 @@
 #include <string>
 #include <cstring>
 #include <signal.h>
+#include <map>
+#include <queue>
 #include <arpa/inet.h>
-#include "LogService.hpp"
-#include "UserService.hpp"
-#include "MessageService.hpp"
+#include "Cardinal/Service/LogService.hpp"
+#include "Cardinal/Service/CommunicationService.hpp"
 #include "Cardinal/Exception/Exceptions.h"
 
 using namespace std;
 
-namespace Cardinal::Service
+namespace Cardinal::Service::Communication
 {
-    struct req
-    {
-        int des;
-        socklen_t addlen;
-        sockaddr_in clientaddr;
-    };
-
-    class TCPListenerServiceInterface {
-        public:
-            virtual ~TCPListenerServiceInterface() noexcept = default;
-            virtual void Start() = 0;
-            virtual void Accept() = 0;
-            virtual void Bind(string port, char *address) = 0;
-            virtual void Bind(string port, string address) = 0;
-    };
-
-    class TCPListenerService: public TCPListenerServiceInterface
+    class TCPClient: public CommunicationServiceInterface
     {
     public:
-        explicit TCPListenerService(Cardinal::Service::LogServiceInterface& s, Cardinal::Service::UserServiceInterface& s1): logService_(s), userService_(s1) {
+        explicit TCPClient(Cardinal::Service::LogServiceInterface& s): logService_(s) {
             this->logService_.Verbose("Starting TCPListenerService");
         }
 
-        void Bind(string port, char *address);
-        void Bind(string port, string address);
+        void Bind(std::string port, char *address);
+        void Bind(std::string port, std::string address);
         void Start();
         void Accept();
+        void RegisterCallback(std::string name, std::function<void(void *args)> callback);
 
         static void sig_handler(int signo)
         {
@@ -68,14 +54,16 @@ namespace Cardinal::Service
 
     private:
         Cardinal::Service::LogServiceInterface& logService_;
-        Cardinal::Service::UserServiceInterface& userService_;
         u_int32_t Port;
         u_int32_t Address;
         sockaddr_in clientaddr;
         socklen_t addrlen;
         int mistfd = 0;
+        std::map<std::string, std::function<void(void *args)>> Callbacks;
+
+        // // Messages added to a write queue based on connection id.
+        // std::map<std::string, std::queue<void *>> WriteQueue;
         static void *Connection(void *args);
-        void *LocalConnection(void *args);
         void CreateSocketStream();
         sockaddr_in ConfigureServerAddress();
         void SetSocketData(sockaddr_in &clientaddr, socklen_t &addrlen);
@@ -83,6 +71,7 @@ namespace Cardinal::Service
         void StoreServerAddressInMemory(sockaddr_in serverAddress);
         void BindServerAddressAndPort(sockaddr_in serverAddress);
         void ListenForConnections();
+        void CallCallbackByName(string name, void *args);
     };
 }
 #endif
