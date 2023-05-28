@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:20.04
 
 RUN apt-get update
 RUN apt-get install -y libhiredis-dev
@@ -8,4 +8,4 @@ RUN ldconfig
 RUN mkdir /app
 WORKDIR /app
 
-CMD ./myexample
+CMD sleep 10 && ./cardinal-server

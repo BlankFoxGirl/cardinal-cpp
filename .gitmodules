@@ -9,4 +9,4 @@
 	url = https://github.com/google/benchmark.git
 [submodule "vendor/sewenew/redis-plus-plus"]
 	path = vendor/sewenew/redis-plus-plus
-	url = https://github.com/sewenew/redis-plus-plus.git
+	url = https://github.com/sarahjabado/redis-plus-plus.git

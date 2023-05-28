@@ -14,7 +14,7 @@ install_submodules_manually() {
     LAST=""
     for item in ${CONTENTS[@]};
     do
-    cd $CWD
+    cd "$CWD"
     STRINGHEAD=$( echo "$item" | cut -d '/' -f 1)
         if [[ "$STRINGHEAD" == "vendor" ]]
         then
@@ -25,7 +25,7 @@ install_submodules_manually() {
                 continue
             fi
             mkdir -p "$item"
-            cd $item
+            cd "$item"
             LAST=$(echo "$item")
         else
             if [[ -d "$CWD/$LAST/.git" ]]
@@ -50,7 +50,7 @@ install_modules () {
     CWD=$(pwd)
     if [[ ! -d "$CWD/vendor" ]]
     then
-        mkdir $CWD/vendor
+        mkdir "$CWD/vendor"
         git submodules init
         git submodules update
     fi
@@ -81,31 +81,38 @@ then
     CWD=$(pwd)
     if [[ ! -f "$CWD/vendor/crashoz/uuid_v4/build/Makefile" ]]
     then
-        cd vendor/crashoz/uuid_v4/
+        cd "$CWD/vendor/crashoz/uuid_v4/"
         mkdir build
         cd build
         cmake ..
         make
-        cd $CWD
+        cd "$CWD"
     fi
     if [[ ! -f "$CWD/vendor/sewenew/redis-plus-plus/build/Makefile" ]]
     then
-        cd $CWD/vendor/sewenew/redis-plus-plus/build && cmake .. && make
-        cd $CWD
+        if [[ ! -d "$CWD/vendor/sewenew/redis-plus-plus/build" ]]
+        then
+            mkdir -p "$CWD/vendor/sewenew/redis-plus-plus/build"
+        fi
+        cd "$CWD/vendor/sewenew/redis-plus-plus/build"
+        pwd
+        cmake ..
+        make
+        cd "$CWD"
     fi
 
-    cd $CWD/vendor/sewenew/redis-plus-plus/build && make install
-    cd $CWD
+    cd "$CWD/vendor/sewenew/redis-plus-plus/build" && make install
+    cd "$CWD"
 
-    rm -rf $CWD/build/* && cd build && cmake .. && make
+    rm -rf "$CWD/build/*" && cd build && cmake .. && make
 
     if [[ ! -f "$CWD/build/bin/libredis++.so.1" ]]
     then
-        cp $CWD/vendor/sewenew/redis-plus-plus/build/libredis++.so.1.3.6 $CWD/build/bin/libredis++.so.1
+        cp "$CWD/vendor/sewenew/redis-plus-plus/build/libredis++.so.1.3.6" "$CWD/build/bin/libredis++.so.1"
     fi
 elif [[ "$1" = "run" ]]
 then
-    rm -rf build/* && cd build && cmake .. && make && bin/myexample && cd ../
+    rm -rf build/* && cd build && cmake .. && make && bin/cardinal-server && cd ../
 elif [[ "$1" = "install" ]]
 then
     git submodule init
