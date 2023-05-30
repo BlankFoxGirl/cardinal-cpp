@@ -16,6 +16,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 # This will be simplified. Due to refactoring only the refactored areas are included.
 file(GLOB_RECURSE SOURCES
     # Cardinal/**/*.hpp
+    vendor/boost/di.hpp
     Cardinal/Entity/*.hpp
     Cardinal/Entity/*.cpp
     Cardinal/Event/*.hpp
