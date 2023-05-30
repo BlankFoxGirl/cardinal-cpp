@@ -68,6 +68,7 @@ jobs:
 
     - run: |
         echo "Run, Build Application using script"
+        sudo apt-get install -y libhiredis-dev
         ./dev install_modules
         ./dev build
 
