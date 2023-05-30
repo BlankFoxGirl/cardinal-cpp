@@ -3,7 +3,7 @@
 
 #include "Exception/Exceptions.h"
 #include "Service/LogService.hpp"
-// #include "Service/MemoryService.hpp"
+#include "Service/MemoryService.hpp"
 #include "Service/MessageService.hpp"
 #include "Service/CommunicationService.hpp"
 #include <unistd.h>
@@ -16,11 +16,11 @@ namespace Cardinal {
             explicit Core(
                 Cardinal::Service::LogServiceInterface& s,
                 Cardinal::Service::MessageServiceInterface& s1,
-                // Cardinal::Service::CacheClientInterface& s2,
+                Cardinal::Service::MemoryServiceInterface& s2,
                 Cardinal::Service::CommunicationServiceInterface& s3
             ) : logService_(s),
                 messageService_(s1),
-                // redisService_(s2),
+                memoryService_(s2),
                 communicationService_(s3)
                 // userService_(s4)
             {
@@ -32,7 +32,7 @@ namespace Cardinal {
             void Init();
             Cardinal::Service::LogServiceInterface& logService_;
             Cardinal::Service::MessageServiceInterface& messageService_;
-            // Cardinal::Service::CacheClientInterface& redisService_;
+            Cardinal::Service::MemoryServiceInterface& memoryService_;
             Cardinal::Service::CommunicationServiceInterface& communicationService_;
 
             bool Active = false;
@@ -71,7 +71,9 @@ namespace Cardinal {
 
             void StartLoop(void* &params);
 
-            void StartRedis();
+            void StartMessageService();
+
+            void StartMemoryService();
 
             void Loop();
 

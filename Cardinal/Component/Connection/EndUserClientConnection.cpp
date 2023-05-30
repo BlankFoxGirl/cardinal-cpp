@@ -46,12 +46,18 @@ void EndUserClientConnection::AcceptConnection(void *args)
     fds[0].fd = sock.des;
     fds[0].events = POLLIN;
 
+    // We now have a UUID for the connection.
+    auto entity = Cardinal::Entity::UserEntity();
+    this->userEntity = &entity;
+    this->EstablishMemoryQueue();
+
     // Message template: !#<message>$
     n = write(sock.des, "!#BEGIN$", 8);
     std::string fullMessage = "";
 
     while (n >= 0)
     {
+        // #region Polling for messages received by the client.
         n = poll(fds, 1, 500);
         if (n > 0)
         {
@@ -80,6 +86,16 @@ void EndUserClientConnection::AcceptConnection(void *args)
                 fullMessage = ""; // Reset message.
             }
         }
+        // #endregion
+        // #region Polling for messages to send to the client.
+        if (this->IsNeedingToSendData()) {
+            this->logService_.Verbose("--Messages needing to be sent to client.");
+            std::string dispatchMessage = this->GetMessage();
+            this->logService_.Debug("Sending message to client:", dispatchMessage);
+            n = write(sock.des, dispatchMessage.c_str(), dispatchMessage.length() + 2);
+            this->logService_.Verbose("--Message sent to client.");
+        }
+        // #endregion
     }
 
     this->logService_.Verbose("--Cardinal::Component::Connection::EndUserClientConnection::AcceptConnection Closing Socket.");
@@ -119,12 +135,22 @@ void EndUserClientConnection::InboundMessageHandler(std::string message) {
 
     try {
         this->logService_.Verbose("--EndUserClientConnection::InboundMessageHandler Trimming message boundaries from message", message);
-        message = message.substr(2, message.size() - 4); // Remove message boundaries.
+        message = message.substr(2, message.find("$") - 2); // Remove message boundaries.
         this->logService_.Verbose("--EndUserClientConnection::InboundMessageHandler Message boundaries trimmed from message", message);
 
         this->logService_.Verbose("--EndUserClientConnection::InboundMessageHandler Creating message object from raw message", message);
         Cardinal::Entity::Message inboundMessage = Cardinal::Entity::Message(message);
+
         this->logService_.Verbose("--EndUserClientConnection::InboundMessageHandler Dispatching message to message service.", inboundMessage.getKey() + " " + inboundMessage.getPayload());
+
+        // ToDo: This should be handled by a transaction.
+        this->memoryService_.WriteHash("event:" + inboundMessage.getUUID(), "EventName", inboundMessage.getKey(), EndUserClientConnection::MESSAGE_EXPIRE_TIME);
+        this->memoryService_.WriteHash("event:" + inboundMessage.getUUID(), "Payload", inboundMessage.getPayload(), EndUserClientConnection::MESSAGE_EXPIRE_TIME);
+        this->memoryService_.WriteHash("event:" + inboundMessage.getUUID(), "Origin", this->userEntity->getUUID(), EndUserClientConnection::MESSAGE_EXPIRE_TIME);
+        this->memoryService_.WriteHash("event:" + inboundMessage.getUUID(), "Locked", "0", EndUserClientConnection::MESSAGE_EXPIRE_TIME);
+
+        inboundMessage.setPayload(inboundMessage.getUUID()); // Overwite payload with message UUID then publish to workers.
+
         this->messageService_.Dispatch(inboundMessage);
     } catch (Cardinal::Exception::InvalidMessage& e) {
         this->logService_.Error("EndUserClientConnection::InboundMessageHandler Invalid message received from end user.", e.what());
@@ -138,6 +164,59 @@ void EndUserClientConnection::HandleWritingToClient() {
     // Do nothing.
 }
 
+std::string EndUserClientConnection::GetMessage() {
+    this->logService_.Verbose("[Called] EndUserClientConnection::GetMessage");
+    std::string message = this->userEntity->GetMessageToSend();
+    this->logService_.Verbose("[Closed] EndUserClientConnection::GetMessage", "!#" + message + "$");
+    return "!#" + message + "$";
+}
+
 bool EndUserClientConnection::IsNeedingToSendData() {
+    bool response = this->userEntity->hasMessagesToBeSent();
+
+    // Send what we have in the user entity to the user.
+    if (response == true) {
+        this->logService_.Verbose("[Closed] EndUserClientConnection::IsNeedingToSendData", "true");
+        return response;
+    }
+
+    // Use this cycle to pull messages from the memory queue into the user entity.
+    if (this->HasItemsInMemoryQueue()) {
+        this->logService_.Verbose("--EndUserClientConnection::IsNeedingToSendData Has message in the memory queue.");
+        this->PullMemoryQueue();
+    }
+
+    return false;
+}
+
+void EndUserClientConnection::EstablishMemoryQueue() {
+    this->ConnectionMemoryKey = "queue:" + this->userEntity->getUUID();
+    this->memoryService_.Add(this->ConnectionMemoryKey, "ESTABLISHED", EndUserClientConnection::MESSAGE_EXPIRE_TIME);
+}
+
+void EndUserClientConnection::PullMemoryQueue() {
+    this->logService_.Verbose("[Called] EndUserClientConnection::PullMemoryQueue", this->ConnectionMemoryKey);
+    this->logService_.Verbose("--EndUserClientConnection::PullMemoryQueue Pulling messages from memory queue.");
+    auto values = this->memoryService_.PopRange(this->ConnectionMemoryKey, 10); // Keep lean.
+    this->logService_.Verbose("--EndUserClientConnection::PullMemoryQueue Messages pulled from memory queue.", std::to_string(values.size()) + " messages.");
+
+    if (values.size() > 0) {
+        this->logService_.Verbose(
+            "--EndUserClientConnection::PullMemoryQueue Adding messages to user entity.",
+            this->userEntity->getUUID()
+        );
+
+        this->userEntity->AddToSendBuffer(values);
+    }
+
+    this->logService_.Verbose("[Closed] EndUserClientConnection::PullMemoryQueue");
+}
+
+bool EndUserClientConnection::HasItemsInMemoryQueue() {
+    if (this->memoryService_.Length(this->ConnectionMemoryKey) > 0) {
+        this->logService_.Debug("EndUserClientConnection::HasItemsInMemoryQueue", "true");
+        return true;
+    }
+
     return false;
 }

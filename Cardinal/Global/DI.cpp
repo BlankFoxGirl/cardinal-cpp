@@ -3,6 +3,7 @@
 #include "Cardinal/Service/Log/LogClient.hpp"
 #include "Cardinal/Service/Message/MessageClient.hpp"
 #include "Cardinal/Service/Communication/TCPClient.hpp"
+#include "Cardinal/Service/Memory/RedisCacheClient.hpp"
 #include "vendor/boost/di.hpp"
 #include "DI.hpp"
 #include "Cardinal/Core.hpp"
@@ -19,7 +20,7 @@ void Cardinal::Global::DI::Init() {
     auto injector = di::make_injector(
         di::bind<LogServiceInterface>().to<Cardinal::Service::Log::LogClient>(),
         di::bind<CommunicationServiceInterface>().to<Cardinal::Service::Communication::TCPClient>(),
-        // boost::di::bind<MemoryServiceInterface>().to<MemoryService>(),
+        di::bind<MemoryServiceInterface>().to<Cardinal::Service::Memory::RedisCacheClient>(),
         di::bind<MessageServiceInterface>().to<Cardinal::Service::Message::MessageClient>()
         // boost::di::bind<StorageServiceInterface>().to<StorageService>()
     );
