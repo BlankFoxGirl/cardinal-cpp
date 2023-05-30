@@ -20,7 +20,8 @@ void Core::Init() {
     this->SetLogEnvironment();
     this->logService_.Info("Starting Cardinal Core");
     this->LoadEnvironmentVariables();
-    this->StartRedis();
+    this->StartMessageService();
+    this->StartMemoryService();
 
     if (this->is_listener) {
         this->StartListener();
@@ -71,10 +72,11 @@ void Core::LoadEnvironment()
 
 void Core::LoadRedisConfig()
 {
-    this->logService_.Verbose("Called LoadRedisConfig");
+    this->logService_.Verbose("[Called] LoadRedisConfig");
     this->logService_.Debug("Loading Redis config...");
     this->REDIS_HOST = this->LoadEnvironmentVariable("REDIS_HOST", "localhost");
     this->REDIS_PORT = this->LoadEnvironmentVariable("REDIS_PORT", "6379");
+    this->logService_.Verbose("[Closed] LoadRedisConfig");
 }
 
 void Core::LoadListenerConfig()
@@ -99,7 +101,8 @@ void Core::RegisterListenerCallback()
         Cardinal::Component::Connection::EndUserClientConnection userConnection(
             this->logService_,
             this->communicationService_,
-            this->messageService_
+            this->messageService_,
+            this->memoryService_
         );
 
         userConnection.AcceptConnection(args);
@@ -219,11 +222,20 @@ void Core::StartLoop(void* &params) {
     this->logService_.Verbose("StartLoop Closed Loop");
 }
 
-void Core::StartRedis() {
-    this->logService_.Verbose("Called StartRedis");
-    this->logService_.Info("Starting Redis...");
+void Core::StartMessageService() {
+    this->logService_.Verbose("[Called] StartMessageService");
+    this->logService_.Info("Starting Message Service...");
     this->messageService_.Connect(this->REDIS_HOST, this->REDIS_PORT);
-    this->logService_.Info("Redis started!");
+    this->logService_.Info("Message Service started!");
+    this->logService_.Verbose("[Closed] StartMessageService");
+}
+
+void Core::StartMemoryService() {
+    this->logService_.Verbose("[Called] StartMemoryService");
+    this->logService_.Info("Starting Memory Service...");
+    this->memoryService_.Connect(this->REDIS_HOST, this->REDIS_PORT);
+    this->logService_.Info("Memory Service started!");
+    this->logService_.Verbose("[Closed] StartMemoryService");
 }
 
 void Core::Loop() {

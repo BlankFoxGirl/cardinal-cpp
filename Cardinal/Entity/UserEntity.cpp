@@ -1,17 +1,12 @@
 #include "AbstractEntity.h"
 #include "PlayerEntity.hpp"
 #include "UserEntity.hpp"
-// #include "Cardinal/Service/TCPListenerService.h"
 
 using Cardinal::Entity::UserEntity;
 Cardinal::Entity::UserEntity::UserEntity() {
     this->player = PlayerEntity();
 }
 
-// Cardinal::Entity::UserEntity::UserEntity(Cardinal::Service::req req) {
-//     this->req = req;
-//     this->player = PlayerEntity();
-// }
 
 void UserEntity::Write(std::string response, bool error) {
     UserWriteBufferObject writeBufferObject;
@@ -20,10 +15,19 @@ void UserEntity::Write(std::string response, bool error) {
     this->writeBuffer.push(writeBufferObject);
 }
 
-void UserEntity::AddToReadBuffer(std::string response) {
-    UserReadBufferObject readBufferObject;
-    readBufferObject.request = response;
-    this->readBuffer.push(readBufferObject);
+void UserEntity::AddToSendBuffer(std::string response) {
+    UserWriteBufferObject sendBufferObject;
+    sendBufferObject.response = response;
+    this->writeBuffer.push(sendBufferObject);
+}
+
+void UserEntity::AddToSendBuffer(std::queue<std::string> messages) {
+    while (messages.size() > 0) {
+        UserWriteBufferObject sendBufferObject;
+        sendBufferObject.response = messages.front();
+        this->writeBuffer.push(sendBufferObject);
+        messages.pop();
+    }
 }
 
 bool UserEntity::hasMessagesToBeSent() {
