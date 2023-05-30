@@ -4,6 +4,7 @@
 #include <utility>
 #include <netinet/in.h>
 #include <sys/types.h>
+#include <functional>
 
 namespace Cardinal::Service {
     struct req

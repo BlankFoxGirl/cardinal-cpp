@@ -1,6 +1,6 @@
 #ifndef CARDINAL_SERVICE_MESSAGESERVICE_H
 #define CARDINAL_SERVICE_MESSAGESERVICE_H
-
+#include <functional>
 #include "Cardinal/Entity/Message.hpp"
 
 namespace Cardinal::Service {
