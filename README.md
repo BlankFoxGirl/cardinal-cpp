@@ -1,4 +1,5 @@
 # Cardinal Code C++
+[![CodeQL](https://github.com/sarahjabado/cardinal-cpp/actions/workflows/codeql.yml/badge.svg?branch=master)](https://github.com/sarahjabado/cardinal-cpp/actions/workflows/codeql.yml)
 
 A C++ Rewrite of the original Cardinal Core for improved performance.
 
