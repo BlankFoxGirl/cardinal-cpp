@@ -8,7 +8,6 @@
 #include "DI.hpp"
 #include "Cardinal/Core.hpp"
 
-namespace di = boost::di;
 using namespace Cardinal::Service;
 
 Cardinal::Global::DI::DI() {
@@ -17,11 +16,11 @@ Cardinal::Global::DI::DI() {
 
 template <typename T>
 void Cardinal::Global::DI::Init() {
-    auto injector = di::make_injector(
-        di::bind<LogServiceInterface>().to<Cardinal::Service::Log::LogClient>(),
-        di::bind<CommunicationServiceInterface>().to<Cardinal::Service::Communication::TCPClient>(),
-        di::bind<MemoryServiceInterface>().to<Cardinal::Service::Memory::RedisCacheClient>(),
-        di::bind<MessageServiceInterface>().to<Cardinal::Service::Message::MessageClient>()
+    auto injector = boost::di::make_injector(
+        boost::di::bind<Cardinal::Service::LogServiceInterface>().to<Cardinal::Service::Log::LogClient>(),
+        boost::di::bind<Cardinal::Service::CommunicationServiceInterface>().to<Cardinal::Service::Communication::TCPClient>(),
+        boost::di::bind<Cardinal::Service::MemoryServiceInterface>().to<Cardinal::Service::Memory::RedisCacheClient>(),
+        boost::di::bind<Cardinal::Service::MessageServiceInterface>().to<Cardinal::Service::Message::MessageClient>()
         // boost::di::bind<StorageServiceInterface>().to<StorageService>()
     );
 

@@ -14,6 +14,7 @@
 #include <cstring>
 #include <signal.h>
 #include <arpa/inet.h>
+#include <algorithm>
 #include "EndUserClientConnection.hpp"
 #include "Cardinal/Entity/Message.hpp"
 #include "Cardinal/Exception/InvalidMessage.h"

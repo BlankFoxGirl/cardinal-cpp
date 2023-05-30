@@ -3,6 +3,7 @@
 #include <string>
 #include <map>
 #include <iostream>
+#include <memory>
 #include "Cardinal/Exception/Exceptions.h"
 #include "Cardinal/Event/AbstractEvent.hpp"
 #include "Cardinal/Service/MessageService.hpp"

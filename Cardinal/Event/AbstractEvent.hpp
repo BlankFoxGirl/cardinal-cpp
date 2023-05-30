@@ -1,6 +1,7 @@
 #ifndef AbstractEvent_H
 #define AbstractEvent_H
 #include <string>
+#include <memory>
 #include "Cardinal/Service/LogService.hpp"
 
 namespace Cardinal::Event {

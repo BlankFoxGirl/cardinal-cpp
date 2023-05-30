@@ -2,6 +2,7 @@
 #define TEE_H
 #include <string>
 #include <iostream>
+#include <memory>
 #include "AbstractEvent.hpp"
 #include "Cardinal/Service/LogService.hpp"
 

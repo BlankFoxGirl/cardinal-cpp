@@ -101,10 +101,18 @@ then
         cd "$CWD"
     fi
 
-    cd "$CWD/vendor/sewenew/redis-plus-plus/build" && make install
+    cd "$CWD/vendor/sewenew/redis-plus-plus/build"
+    make install || echo "Cannot install redis-plus-plus on system."
     cd "$CWD"
 
-    rm -rf "$CWD/build/*" && cd build && cmake .. && make
+    if [[ ! -d "$CWD/build" ]]
+    then
+        mkdir "$CWD/build"
+    else
+        rm -rf "$CWD/build/*"
+    fi
+
+    cd "$CWD/build" && cmake .. && make
 
     if [[ ! -f "$CWD/build/bin/libredis++.so.1" ]]
     then
