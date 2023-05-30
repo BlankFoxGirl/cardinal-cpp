@@ -1,6 +1,7 @@
 #ifndef CARDINAL_MESSAGECLIENT_H
 #define CARDINAL_MESSAGECLIENT_H
 #include <string>
+#include <memory>
 #include "Cardinal/Service/MessageService.hpp"
 #include "Cardinal/Service/LogService.hpp"
 #include <sw/redis++/redis++.h>
