@@ -101,7 +101,8 @@ then
         cd "$CWD"
     fi
 
-    cd "$CWD/vendor/sewenew/redis-plus-plus/build" && make install
+    cd "$CWD/vendor/sewenew/redis-plus-plus/build"
+    make install || echo "Cannot install redis-plus-plus on system."
     cd "$CWD"
 
     rm -rf "$CWD/build/*" && cd build && cmake .. && make
