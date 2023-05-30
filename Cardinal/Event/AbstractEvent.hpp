@@ -2,6 +2,8 @@
 #define AbstractEvent_H
 #include <string>
 #include "Cardinal/Service/LogService.hpp"
+#include "Cardinal/Service/MemoryService.hpp"
+#include "Cardinal/Service/MessageService.hpp"
 
 namespace Cardinal::Event {
     class AbstractEvent {
@@ -15,9 +17,12 @@ namespace Cardinal::Event {
                 return true;
             }
 
-            virtual std::unique_ptr<AbstractEvent> Clone(Cardinal::Service::LogServiceInterface& logService) {
+            virtual std::unique_ptr<AbstractEvent> Clone(
+                Cardinal::Service::LogServiceInterface& logService,
+                Cardinal::Service::MessageServiceInterface& messageService,
+                Cardinal::Service::MemoryServiceInterface& memoryService
+            ) {
                 return std::make_unique<AbstractEvent>();
-                // return new AbstractEvent();
             }
 
             template <typename... Args>
@@ -28,7 +33,6 @@ namespace Cardinal::Event {
             static std::string GetEventKey() {
                 return "AbstractEvent";
             };
-            // std::string SetEventKey(std::string eventKey);
     };
 }
 #endif

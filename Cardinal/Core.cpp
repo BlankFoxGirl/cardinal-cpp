@@ -163,7 +163,7 @@ void Core::StartWorker() {
             Cardinal::Entity::Message message = Cardinal::Entity::Message(raw);
             this->logService_.Debug("--Received message", message.getPayload());
             this->logService_.Verbose("--Instantiating Message Component...");
-            auto r = Cardinal::Component::Message::Receive(this->logService_, this->messageService_);
+            auto r = Cardinal::Component::Message::Receive(this->logService_, this->messageService_, this->memoryService_);
             this->logService_.Verbose("--Message component instantiated successfully!");
             this->logService_.Verbose("--Call Message Component Invoker with", message.getUUID() + ": " + message.getKey() + "->" + message.getPayload());
             r(message); // Invoke the message component with the received message.
