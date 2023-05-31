@@ -36,7 +36,7 @@ void Receive::InvokeEventMap() {
 
     try {
         this->logService.Verbose("--Cardinal::Component::Message::Receive::InvokeEventMap instantiating event map component.");
-        auto eventMap = Cardinal::Component::EventMap::EventMap::Create(this->logService);
+        auto eventMap = Cardinal::Component::EventMap::EventMap::Create(this->logService, this->messageService, this->memoryService);
         this->logService.Verbose("--Cardinal::Component::Message::Receive::InvokeEventMap Invoking event map component.");
         eventMap->Invoke(this->message);
         this->logService.Verbose("--Cardinal::Component::Message::Receive::InvokeEventMap done.");

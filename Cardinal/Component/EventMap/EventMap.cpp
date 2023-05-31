@@ -42,7 +42,7 @@ void EventMap::RetrieveAndInvokeEventObject(std::string EventName, std::string P
         this->logService_.Verbose("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject retrieving event from registered events.");
         auto factory = events.at(EventName)();
         this->logService_.Verbose("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject cloning event into scope...");
-        auto receivedEventObject = factory->Clone(this->logService_);
+        auto receivedEventObject = factory->Clone(this->logService_, this->messageService_, this->memoryService_);
 
         this->logService_.Verbose("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject invoking event...");
         receivedEventObject->invoke(Payload);
