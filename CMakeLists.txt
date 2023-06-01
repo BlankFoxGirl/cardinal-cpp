@@ -15,37 +15,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # This will be simplified. Due to refactoring only the refactored areas are included.
 file(GLOB_RECURSE SOURCES
-    # Cardinal/**/*.hpp
-    vendor/boost/di.hpp
-    Cardinal/Entity/*.hpp
-    Cardinal/Entity/*.cpp
-    Cardinal/Event/*.hpp
-    Cardinal/Event/*.cpp
+    Cardinal/**/*.hpp
     Cardinal/Exception/*.h
-    Cardinal/Exception/*.cpp
-    Cardinal/Service/Memory/*.hpp
-    Cardinal/Service/Memory/*.cpp
-    Cardinal/Service/LogService.hpp
-    Cardinal/Service/Log/*.hpp
-    Cardinal/Service/Log/*.cpp
-    Cardinal/Service/MessageService.hpp
-    Cardinal/Service/Message/*.cpp
-    Cardinal/Service/Message/*.hpp
-    Cardinal/Service/CommunicationService.hpp
-    Cardinal/Service/Communication/*.cpp
-    Cardinal/Service/Communication/*.hpp
-    Cardinal/Service/Services.hpp
-    Cardinal/Component/Message/*.hpp
-    Cardinal/Component/Message/*.cpp
-    Cardinal/Component/EventMap/*.hpp
-    Cardinal/Component/EventMap/*.cpp
-    Cardinal/Component/Connection/*.hpp
-    Cardinal/Component/Connection/*.cpp
-    Cardinal/Global/DI.hpp
-    Cardinal/Global/DI.cpp
     Cardinal/Core.hpp
     Cardinal/Core.cpp
-    # Cardinal/**/*.cpp
+    Cardinal/**/*.cpp
     application.cpp
 )
 

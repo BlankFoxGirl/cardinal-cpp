@@ -34,7 +34,7 @@ bool UserEntity::hasMessagesToBeSent() {
     return this->writeBuffer.empty() == false;
 }
 
-string UserEntity::GetMessageToSend() {
+std::string UserEntity::GetMessageToSend() {
     if (this->writeBuffer.size() > 0) {
         UserWriteBufferObject writeBufferObject = this->writeBuffer.front();
         this->writeBuffer.pop();
@@ -44,7 +44,7 @@ string UserEntity::GetMessageToSend() {
     return "";
 }
 
-string UserEntity::Read() {
+std::string UserEntity::Read() {
     if (this->readBuffer.size() > 0) {
         UserReadBufferObject readBufferObject = this->readBuffer.front();
         this->readBuffer.pop();

@@ -21,10 +21,15 @@ namespace Cardinal::Entity {
             void AddToSendBuffer(std::string response);
             void AddToSendBuffer(std::queue<std::string> messages);
             bool hasMessagesToBeSent();
-            string Read();
-            string GetMessageToSend();
+            std::string Read();
+            std::string GetMessageToSend();
             PlayerEntity GetPlayer();
             PlayerEntity SetPlayer(PlayerEntity player);
+
+            std::vector<std::pair<std::string, std::string>> Serialize() override {
+                std::vector<std::pair<std::string, std::string>> serialEmpty;
+                return serialEmpty;
+            }
 
         private:
             std::queue<UserWriteBufferObject> writeBuffer;

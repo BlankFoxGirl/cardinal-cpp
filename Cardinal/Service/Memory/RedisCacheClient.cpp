@@ -14,6 +14,11 @@ void RedisCacheClient::WriteHash(std::string Key, std::pair<std::string, std::st
     this->SetTTL(Key, ttl);
 }
 
+void RedisCacheClient::WriteAllHash(std::string Key, std::vector<std::pair<std::string, std::string>> Hash, int ttl) {
+    RedisCacheClient::redis.hmset(Key, Hash.begin(), Hash.end());
+    this->SetTTL(Key, ttl);
+}
+
 void RedisCacheClient::Write(std::string Key, std::string Value, int ttl) {
     RedisCacheClient::redis.set(Key, Value);
     this->SetTTL(Key, ttl);

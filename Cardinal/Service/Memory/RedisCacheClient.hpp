@@ -12,6 +12,7 @@ namespace Cardinal::Service::Memory {
             void Connect(std::string Hostname, std::string Port, std::string Protocol = "tcp");
             void WriteHash(std::string Key, std::string Field, std::string Value, int ttl = DEFAULT_TTL);
             void WriteHash(std::string Key, std::pair<std::string, std::string> Pair, int ttl = DEFAULT_TTL);
+            void WriteAllHash(std::string Key, std::vector<std::pair<std::string, std::string>> Hash, int ttl = DEFAULT_TTL);
             void Write(std::string Key, std::string Value, int ttl = DEFAULT_TTL);
             void Add(std::string Key, std::string Value, int ttl = DEFAULT_TTL);
             std::string Fetch(std::string Key);
@@ -26,7 +27,7 @@ namespace Cardinal::Service::Memory {
             void Persist(std::string Key);
 
             private:
-                static const int DEFAULT_TTL = 0;
+                static const int DEFAULT_TTL = 60;
                 static sw::redis::Redis redis;
                 void SetTTL(std::string Key, int ttl);
     };

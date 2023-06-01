@@ -17,7 +17,9 @@
 #include <algorithm>
 #include "EndUserClientConnection.hpp"
 #include "Cardinal/Entity/Message.hpp"
+#include "Cardinal/Entity/EventEntity.hpp"
 #include "Cardinal/Exception/InvalidMessage.h"
+#include "Cardinal/Component/EventMap/MemoryEvent.hpp"
 
 using namespace Cardinal::Component::Connection;
 
@@ -143,16 +145,12 @@ void EndUserClientConnection::InboundMessageHandler(std::string message) {
         Cardinal::Entity::Message inboundMessage = Cardinal::Entity::Message(message);
 
         this->logService_.Verbose("--EndUserClientConnection::InboundMessageHandler Dispatching message to message service.", inboundMessage.getKey() + " " + inboundMessage.getPayload());
-
-        // ToDo: This should be handled by a transaction.
-        this->memoryService_.WriteHash("event:" + inboundMessage.getUUID(), "EventName", inboundMessage.getKey(), EndUserClientConnection::MESSAGE_EXPIRE_TIME);
-        this->memoryService_.WriteHash("event:" + inboundMessage.getUUID(), "Payload", inboundMessage.getPayload(), EndUserClientConnection::MESSAGE_EXPIRE_TIME);
-        this->memoryService_.WriteHash("event:" + inboundMessage.getUUID(), "Origin", this->userEntity->getUUID(), EndUserClientConnection::MESSAGE_EXPIRE_TIME);
-        this->memoryService_.WriteHash("event:" + inboundMessage.getUUID(), "Locked", "0", EndUserClientConnection::MESSAGE_EXPIRE_TIME);
-
-        inboundMessage.setPayload(inboundMessage.getUUID()); // Overwite payload with message UUID then publish to workers.
-
-        this->messageService_.Dispatch(inboundMessage);
+        Cardinal::Component::EventMap::MemoryEvent::SendOptimisedMessage(
+            this->userEntity->getUUID(),
+            inboundMessage,
+            this->memoryService_,
+            this->messageService_
+        );
     } catch (Cardinal::Exception::InvalidMessage& e) {
         this->logService_.Error("EndUserClientConnection::InboundMessageHandler Invalid message received from end user.", e.what());
         return;

@@ -1,11 +1,12 @@
 #ifndef ABSTE_H
 #define ABSTE_H
+#include "Cardinal/Entity/Extension/SerializableObject.hpp"
 #include <string>
-using namespace std;
+using namespace Cardinal::Entity::Extension;
 
 namespace Cardinal {
     namespace Entity {
-        class AbstractEntity {
+        class AbstractEntity: public SerializableObject {
             public:
             AbstractEntity();
 
@@ -18,6 +19,8 @@ namespace Cardinal {
             std::string getUUID();
 
             std::string getPoly();
+
+            void overrideUUID(std::string UUID);
 
             private:
                 std::string poly = "";

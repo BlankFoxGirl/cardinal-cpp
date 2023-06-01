@@ -4,14 +4,16 @@
 #include "Cardinal/Entity/Message.hpp"
 #include "Cardinal/Service/LogService.hpp"
 #include "Cardinal/Service/MessageService.hpp"
+#include "Cardinal/Service/MemoryService.hpp"
 
 namespace Cardinal::Component::Message {
     class Receive {
         public:
             explicit Receive(
                 Cardinal::Service::LogServiceInterface& s,
-                Cardinal::Service::MessageServiceInterface& s1
-            ) : logService(s), messageService(s1) {}
+                Cardinal::Service::MessageServiceInterface& s1,
+                Cardinal::Service::MemoryServiceInterface& s2
+            ) : logService(s), messageService(s1), memoryService(s2) {}
 
             ~Receive() = default;
 
@@ -22,6 +24,7 @@ namespace Cardinal::Component::Message {
         private:
             Cardinal::Service::LogServiceInterface& logService;
             Cardinal::Service::MessageServiceInterface& messageService;
+            Cardinal::Service::MemoryServiceInterface& memoryService;
             Cardinal::Entity::Message message;
             void InvokeEventMap();
     };
