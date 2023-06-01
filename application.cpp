@@ -3,6 +3,7 @@
 #include "vendor/boost/di.hpp"
 #include "Cardinal/Service/Services.hpp"
 #include "Cardinal/Event/TestEvent.hpp"
+#include "Cardinal/Event/Player/Movement.hpp"
 #include "Cardinal/Component/EventMap/EventMap.hpp"
 
 namespace di = boost::di;
@@ -10,6 +11,7 @@ namespace di = boost::di;
 int main() {
     // Register event.
     Cardinal::Component::EventMap::EventMap::Register<Cardinal::Event::TestEvent>();
+    Cardinal::Component::EventMap::EventMap::Register<Cardinal::Event::Player::Movement>();
 
     // Currently, this will auto-start the framework.
     auto di = std::make_shared<Cardinal::Global::DI>();
