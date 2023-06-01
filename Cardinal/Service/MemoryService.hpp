@@ -36,6 +36,12 @@ namespace Cardinal::Service {
             /// @param ttl
             virtual void WriteHash(std::string Key, std::pair<std::string, std::string> Pair, int ttl = DEFAULT_TTL) = 0;
 
+            /// @brief Write a vector of string pairs to a key using the memory service
+            /// @param Key 
+            /// @param Hash 
+            /// @param ttl 
+            virtual void WriteAllHash(std::string Key, std::vector<std::pair<std::string, std::string>> Hash, int ttl = DEFAULT_TTL) = 0;
+
             /// @brief Write a value to the memory service
             /// @param Key
             /// @param Value
@@ -83,7 +89,7 @@ namespace Cardinal::Service {
 
             /// @brief Read all hashes from the memory service
             /// @param Key 
-            /// @return 
+            /// @return std::vector<std::pair<std::string, std::string>>
             virtual std::vector<std::pair<std::string, std::string>> ReadAllHash(std::string Key) = 0;
 
             /// @brief Delete a key from the memory service
