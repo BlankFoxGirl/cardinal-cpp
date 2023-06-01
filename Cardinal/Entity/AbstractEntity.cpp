@@ -26,6 +26,10 @@ bool AbstractEntity::hasUUID() {
     return (this->UUID != "");
 }
 
+void AbstractEntity::overrideUUID(std::string UUID) {
+    this->setUUID(UUID);
+}
+
 std::string AbstractEntity::getUUID() {
     return this->UUID;
 }

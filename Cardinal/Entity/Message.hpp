@@ -79,6 +79,13 @@ namespace Cardinal::Entity {
                 }
             }
 
+            std::vector<std::pair<std::string, std::string>> Serialize() override {
+                std::vector<std::pair<std::string, std::string>> serializedMessage;
+                serializedMessage.push_back(std::make_pair("key", this->key));
+                serializedMessage.push_back(std::make_pair("payload", this->payload));
+                return serializedMessage;
+            }
+
         private:
             std::string key = "";
             std::string payload = "";
