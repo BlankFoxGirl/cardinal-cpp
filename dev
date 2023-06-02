@@ -79,6 +79,7 @@ then
 elif [[ "$1" = "clean" ]]
 then
     rm -rf build/*
+    rm -rf build/.*
 elif [[ "$1" = "build" ]]
 then
     CWD=$(pwd)
