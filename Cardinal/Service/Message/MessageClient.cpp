@@ -8,7 +8,13 @@ using namespace Cardinal::Service::Message;
 void MessageClient::Dispatch(Cardinal::Entity::Message message) {
     // Send payload to producer.
     std::string payload = message.Compile();
-    MessageClient::redis.publish(message.getKey(), payload);
+    MessageClient::redis.publish(Cardinal::Global::Queue::DEFAULT, payload);
+}
+
+void MessageClient::Dispatch(Cardinal::Entity::Message message, std::string queue) {
+    // Send payload to producer.
+    std::string payload = message.Compile();
+    MessageClient::redis.publish(queue, payload);
 }
 
 void MessageClient::Subscribe(Cardinal::Service::Queue queue) {

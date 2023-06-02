@@ -11,6 +11,8 @@ namespace Cardinal::Entity {
         std::string name;
         Vector3 position;
         Quaternion rotation;
+        int mapId;
+        int instanceId;
     };
 
     //  ToDo: Extract into seperate entity for items.

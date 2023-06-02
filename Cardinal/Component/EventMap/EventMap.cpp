@@ -7,6 +7,7 @@
 #include "EventMap.hpp"
 #include "Cardinal/Service/LogService.hpp"
 #include "Cardinal/Entity/Message.hpp"
+#include "Cardinal/Entity/EventEntity.hpp"
 
 using namespace Cardinal::Component::EventMap;
 
@@ -43,13 +44,30 @@ void EventMap::RetrieveAndInvokeEventObject(std::string EventName, std::string P
         auto factory = events.at(EventName)();
         this->logService_.Verbose("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject cloning event into scope...");
         auto receivedEventObject = factory->Clone(this->logService_, this->messageService_, this->memoryService_);
+        // Retrieve message from memory reference if not locked. If locked, lock it to self and then retrieve.
+        auto lockStatus = this->memoryService_.ReadHash("event:" + Payload, "Locked");
+
+        if (lockStatus.second.compare("1") == 0) {
+            this->logService_.Verbose("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject event locked.");
+            return;
+        }
+
+        this->logService_.Verbose("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject locking event...");
+        this->memoryService_.WriteHash("event:" + Payload, "Locked", "1"); // Lock event.
+        this->logService_.Verbose("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject event locked!");
+
+        this->logService_.Verbose("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject extracting event payload...");
+        auto eventData = this->memoryService_.ReadAllHash("event:" + Payload);
+        auto event = Cardinal::Entity::EventEntity(eventData);
+        std::string eventPayload = event.ToString();
+        this->logService_.Verbose("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject event payload extracted.", eventPayload);
 
         this->logService_.Verbose("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject invoking event...");
-        receivedEventObject->invoke(Payload);
+        receivedEventObject->invoke(eventPayload);
         this->logService_.Verbose("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject event invoked.");
 
     } catch (std::exception& e) {
-        this->logService_.Error("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject", "Failed to execute event.");
+        this->logService_.Error("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject", e.what());
         throw Cardinal::Exception::InvalidOrMissingEvent();
     }
     // Factory and Event both deleted here.

@@ -17,6 +17,10 @@ namespace Cardinal::Service {
         /// @param message The Cardinal::Entity::Message to dispatch.
         virtual void Dispatch(Cardinal::Entity::Message message) = 0;
 
+        /// @brief Dispatch a Cardinal::Entity::Message to the upstream message service.
+        /// @param message The Cardinal::Entity::Message to dispatch.
+        virtual void Dispatch(Cardinal::Entity::Message message, std::string queue) = 0;
+
         /// @brief Subscribe to a queue and consume messages.
         /// @param queue The queue to subscribe to.
         virtual void* SubscribeAndConsume(Queue queue) = 0;

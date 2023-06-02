@@ -1,5 +1,5 @@
 #!/bin/bash
-COMPOSE='docker-compose -f Docker/docker-compose.yml'
+COMPOSE='docker-compose -p CardinalCPP -f Docker/docker-compose.yml'
 
 if [[ -z "$1" ]]
 then

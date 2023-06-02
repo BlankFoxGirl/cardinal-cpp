@@ -5,6 +5,7 @@
 #include "Cardinal/Entity/Message.hpp"
 #include "Cardinal/Service/Services.hpp"
 #include "Cardinal/Entity/EventEntity.hpp"
+#include "Cardinal/Global/Queue.hpp"
 
 namespace Cardinal::Component::EventMap {
     class MemoryEvent {
@@ -16,7 +17,8 @@ namespace Cardinal::Component::EventMap {
                 std::string connectionUUID,
                 Cardinal::Entity::Message& message,
                 Service::MemoryServiceInterface& memoryService,
-                Service::MessageServiceInterface& messageService
+                Service::MessageServiceInterface& messageService,
+                std::string Queue = Cardinal::Global::Queue::DEFAULT
             );
     };
 }

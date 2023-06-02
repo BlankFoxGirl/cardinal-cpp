@@ -10,7 +10,8 @@ void MemoryEvent::SendOptimisedMessage(
     std::string connectionUUID,
     Cardinal::Entity::Message& message,
     Service::MemoryServiceInterface& memoryService,
-    Service::MessageServiceInterface& messageService
+    Service::MessageServiceInterface& messageService,
+    std::string queue
 ) {
     auto eventEntity = Cardinal::Entity::EventEntity(
             message.getKey(),

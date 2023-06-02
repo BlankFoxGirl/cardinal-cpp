@@ -14,6 +14,13 @@ namespace Cardinal::Entity {
                 this->Locked = Locked;
             }
 
+            EventEntity(std::vector<std::pair<std::string, std::string>> serializedEvent) {
+                this->EventName = serializedEvent[0].second;
+                this->Payload = serializedEvent[1].second;
+                this->Origin = serializedEvent[2].second;
+                this->Locked = serializedEvent[3].second;
+            }
+
             ~EventEntity() = default;
 
             std::vector<std::pair<std::string, std::string>> Serialize() override {
@@ -24,6 +31,10 @@ namespace Cardinal::Entity {
                 serializedEvent.push_back(std::make_pair("Locked", this->Locked));
 
                 return serializedEvent;
+            }
+
+            std::string ToString() {
+                return this->EventName + "|" + this->Payload + "," + this->Origin;
             }
 
             std::string GetKey() {

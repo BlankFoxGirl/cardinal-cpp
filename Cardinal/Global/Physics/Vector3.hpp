@@ -73,6 +73,10 @@ namespace Cardinal::Global::Physics {
             return sqrtf(powf(Vector.x - this->x, 2) + powf(Vector.y - this->y, 2) + powf(Vector.z - this->z, 2));
         }
 
+        bool IsIntersecting(Vector3 Vector, float Radius) {
+            return this->DistanceFrom(Vector) <= Radius;
+        }
+
         Vector3 Lerp(Vector3 V2, float t) {
             return Vector3(this->x + (V2.x - this->x) * t, this->y + (V2.y - this->y) * t, this->z + (V2.z - this->z) * t);
         }

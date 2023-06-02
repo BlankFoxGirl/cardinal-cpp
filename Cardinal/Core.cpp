@@ -6,7 +6,8 @@
 #include "Component/Message/Receive.hpp"
 #include "Component/EventMap/EventMap.hpp"
 #include "Component/Connection/EndUserClientConnection.hpp"
-#include "Event/TestEvent.hpp"
+
+#include "Global/Queue.hpp"
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -146,7 +147,7 @@ void Core::StartWorker() {
     this->logService_.Info("Initiating Worker");
 
     Cardinal::Service::Queue q;
-    q.Name = "test";
+    q.Name = LoadEnvironmentVariable("QUEUE", Cardinal::Global::Queue::DEFAULT);
     this->logService_.Debug("Subscribing to Redis channel ", q.Name);
 
     q.Callback = [this](std::string raw) {
@@ -177,7 +178,7 @@ void Core::StartWorker() {
     };
 
     this->messageService_.SubscribeAndConsume(q);
-    this->logService_.Debug("Subscribed to channel 'test'");
+    this->logService_.Debug("Subscribed to channel", q.Name);
 }
 
 void Core::StartListener() {

@@ -4,6 +4,7 @@
 #include <memory>
 #include "Cardinal/Service/MessageService.hpp"
 #include "Cardinal/Service/LogService.hpp"
+#include "Cardinal/Global/Queue.hpp"
 #include <sw/redis++/redis++.h>
 extern sw::redis::Subscriber MessageSubscribers;
 namespace Cardinal::Service::Message {
@@ -12,6 +13,7 @@ namespace Cardinal::Service::Message {
             explicit MessageClient(Cardinal::Service::LogServiceInterface* logService): logService(logService), subscriber(nullptr){};
 
             void Dispatch(Cardinal::Entity::Message message);
+            void Dispatch(Cardinal::Entity::Message message, std::string queue = Cardinal::Global::Queue::DEFAULT);
             void* SubscribeAndConsume(Cardinal::Service::Queue queue);
             void* Consume(Cardinal::Service::Queue queue);
             void Connect(std::string ConnectUrl);
