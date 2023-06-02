@@ -7,7 +7,6 @@
 #include "Cardinal/Service/MemoryService.hpp"
 #include "Cardinal/Component/User/Player.hpp"
 #include "Cardinal/Component/EventMap/MemoryEvent.hpp"
-#include <bits/stdc++.h>
 
 using namespace Cardinal::Event::Player;
 
