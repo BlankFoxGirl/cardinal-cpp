@@ -17,7 +17,8 @@ services:
       REDIS_PORT: 6379
       IDENTIFIER: "GameServer"
       IS_LISTENER: "TRUE"
-      GS_POST: 7777
+      POST: 7777
+      BIND_IP: 0.0.0.0
     restart: on-failure
     depends_on:
       compile:
