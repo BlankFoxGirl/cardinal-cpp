@@ -20,7 +20,7 @@ void MemoryEvent::SendOptimisedMessage(
             "0"
         );
 
-    memoryService.WriteAllHash(eventEntity.GetQueue(message.getUUID()), eventEntity.Serialize());
+    memoryService.WriteAllHash(eventEntity.GetQueue(message.getUUID()), eventEntity.Serialize(), 60);
 
     message.setPayload(message.getUUID()); // Overwite payload with message UUID then publish to workers.
 

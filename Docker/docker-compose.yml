@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   compile:
-    image: cardinal-compiler
+    image: sarahjabado/cardinal-compiler:1.0.2
     volumes:
       - ../:/app
   gameserver:

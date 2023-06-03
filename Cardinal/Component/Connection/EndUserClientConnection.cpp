@@ -37,7 +37,7 @@ void EndUserClientConnection::AcceptConnection(void *args)
     this->logService_.Verbose("[Called] Cardinal::Component::Connection::EndUserClientConnection::AcceptConnection");
     Cardinal::Service::req sock = *((Cardinal::Service::req *)args);
 
-    std::vector<char> buf(32); // you are using C++ not C
+    std::vector<char> buf(MAX_BUFFER_SIZE); // you are using C++ not C
     int n = 1;
 
     struct pollfd fds[200];
@@ -61,7 +61,7 @@ void EndUserClientConnection::AcceptConnection(void *args)
     while (n >= 0)
     {
         // #region Polling for messages received by the client.
-        n = poll(fds, 1, 500);
+        n = poll(fds, 1, POLL_TIMEOUT);
         if (n > 0)
         {
             // Flush buffer.

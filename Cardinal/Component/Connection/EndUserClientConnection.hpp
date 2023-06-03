@@ -28,6 +28,9 @@ namespace Cardinal::Component::Connection {
             Cardinal::Service::MemoryServiceInterface& memoryService_;
             Cardinal::Service::MessageServiceInterface& messageService_;
 
+            static const int POLL_TIMEOUT = 100;
+            static const int MAX_BUFFER_SIZE = 1024;
+
             static const int MESSAGE_EXPIRE_TIME = 60;
 
             std::string ConnectionMemoryKey = "";
