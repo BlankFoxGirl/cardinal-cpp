@@ -7,6 +7,30 @@ then
     exit 0
 fi
 
+install_boost_di() {
+    # Check to see if we can use WGET or Curl
+    SRC="https://raw.githubusercontent.com/boost-ext/di/cpp14/include/boost/di.hpp"
+    DEST="$CWD/vendor/boost"
+
+    if [[ ! -d "$DEST" ]]
+    then
+        # Make dir with parents.
+        mkdir -p "$DEST"
+    fi
+
+    # Do CURL / WGET.
+    if [[ -x "$(command -v curl)" ]]
+    then
+        curl -o "$DEST/di.hpp" "$SRC/di.hpp"
+    elif [[ -x "$(command -v wget)" ]]
+    then
+        wget -O "$DEST/di.hpp" "$SRC/di.hpp"
+    else
+        echo "Unable to install boost::di. Please install either CURL or WGET."
+        exit 1
+    fi
+}
+
 install_submodules_manually() {
     CONTENTS=$(cat .gitmodules | grep -E '(path|url).*' | cut -d " " -f 3)
     CWD=$(pwd)
@@ -60,6 +84,12 @@ install_modules () {
         install_submodules_manually
     else
         echo "Submodules installed."
+    fi
+
+    if [[ ! -f "$CWD/vendor/boost/di.hpp" ]]
+    then
+        echo "Installing boost::di"
+        install_boost_di
     fi
 }
 
