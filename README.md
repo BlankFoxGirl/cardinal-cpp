@@ -28,5 +28,6 @@ A C++ Rewrite of the original Cardinal Core for improved performance.
 - Cardinal uses Redis++ which has a library dependency for Hiredis, you must install hiredis before you can build Cardinal or Redis++. [Hiredis Official Repo](https://github.com/redis/hiredis)
 - Cardinal may not compile in certain C++ compilers, it is recommended to use CLang to compiler as Cardinal was designed and tested using CLang, there are known issues with g++.
 - Cardinal is designed to use docker (recommended) for containerisation. However Containerd and Rancher should be adequate.
+- Cardinal comes with its own Docker Image to manage compilation for containerized environments, please refer to [Cardinal-Compiler on Docker Hub](https://hub.docker.com/r/sarahjabado/cardinal-compiler). Source Code: [Cardinal-Compiler Repo](https://github.com/sarahjabado/cardinal-compiler)
 
 Note: Cardinal is designed to compile and run as a docker images / containers. It is not designed to run on a standalone linux system, however, the Cardinal binary file is compiled using docker containers from linux images, this means that with some minor tweaking to the dockerfile you can build Cardinal for your target platform with relative ease.
