@@ -10,80 +10,81 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-namespace Cardinal {
-    class Core {
-        public:
-            explicit Core(
-                Cardinal::Service::LogServiceInterface& s,
-                Cardinal::Service::MessageServiceInterface& s1,
-                Cardinal::Service::MemoryServiceInterface& s2,
-                Cardinal::Service::CommunicationServiceInterface& s3
-            ) : logService_(s),
-                messageService_(s1),
-                memoryService_(s2),
-                communicationService_(s3)
-                // userService_(s4)
-            {
-                this->Init();
-                // Do nothing.
-            }
+namespace Cardinal
+{
+    class Core
+    {
+    public:
+        explicit Core(
+            Cardinal::Service::LogServiceInterface &s,
+            Cardinal::Service::MessageServiceInterface &s1,
+            Cardinal::Service::MemoryServiceInterface &s2,
+            Cardinal::Service::CommunicationServiceInterface &s3) : logService_(s),
+                                                                    messageService_(s1),
+                                                                    memoryService_(s2),
+                                                                    communicationService_(s3)
+        // userService_(s4)
+        {
+            this->Init();
+            // Do nothing.
+        }
 
-        private:
-            void Init();
-            Cardinal::Service::LogServiceInterface& logService_;
-            Cardinal::Service::MessageServiceInterface& messageService_;
-            Cardinal::Service::MemoryServiceInterface& memoryService_;
-            Cardinal::Service::CommunicationServiceInterface& communicationService_;
+    private:
+        void Init();
+        Cardinal::Service::LogServiceInterface &logService_;
+        Cardinal::Service::MessageServiceInterface &messageService_;
+        Cardinal::Service::MemoryServiceInterface &memoryService_;
+        Cardinal::Service::CommunicationServiceInterface &communicationService_;
 
-            bool Active = false;
-            bool dryRun = false;
-            bool is_listener = false;
-            string REDIS_HOST;
-            string REDIS_PORT;
-            string ENVIRONMENT;
-            string IS_LISTENER_DEFAULT_VALUE = "TRUE";
+        bool Active = false;
+        bool dryRun = false;
+        bool is_listener = false;
+        string REDIS_HOST;
+        string REDIS_PORT;
+        string ENVIRONMENT;
+        string IS_LISTENER_DEFAULT_VALUE = "TRUE";
 
-            void SetDebugMode();
+        void SetDebugMode();
 
-            void SetVerboseMode();
+        void SetVerboseMode();
 
-            void SetLogEnvironment();
+        void SetLogEnvironment();
 
-            void LoadEnvironmentVariables();
+        void LoadEnvironmentVariables();
 
-            void LoadEnvironment();
+        void LoadEnvironment();
 
-            void LoadRedisConfig();
+        void LoadRedisConfig();
 
-            void LoadListenerConfig();
+        void LoadListenerConfig();
 
-            void RegisterListenerCallback();
+        void RegisterListenerCallback();
 
-            void LoadListenerToggle();
+        void LoadListenerToggle();
 
-            string LoadEnvironmentVariable(string key, string default_value = "");
+        string LoadEnvironmentVariable(string key, string default_value = "");
 
-            void StartWorker();
+        void StartWorker();
 
-            void StartListener();
+        void StartListener();
 
-            void StartLoop();
+        void StartLoop();
 
-            void StartLoop(void* &params);
+        void StartLoop(void *&params);
 
-            void StartMessageService();
+        void StartMessageService();
 
-            void StartMemoryService();
+        void StartMemoryService();
 
-            void Loop();
+        void Loop();
 
-            void Loop(void* &params);
+        void Loop(void *&params);
 
-            void ListenerLoop();
+        void ListenerLoop();
 
-            void WorkerLoop();
+        void WorkerLoop();
 
-            void WorkerLoop(void* &params);
+        void WorkerLoop(void *&params);
     };
 }
 #endif

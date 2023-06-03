@@ -10,12 +10,14 @@
 
 using namespace Cardinal::Service;
 
-Cardinal::Global::DI::DI() {
+Cardinal::Global::DI::DI()
+{
     this->Init<Cardinal::Core>();
 };
 
 template <typename T>
-void Cardinal::Global::DI::Init() {
+void Cardinal::Global::DI::Init()
+{
     auto injector = boost::di::make_injector(
         boost::di::bind<Cardinal::Service::LogServiceInterface>().to<Cardinal::Service::Log::LogClient>(),
         boost::di::bind<Cardinal::Service::CommunicationServiceInterface>().to<Cardinal::Service::Communication::TCPClient>(),

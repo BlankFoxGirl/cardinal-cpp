@@ -3,10 +3,12 @@
 #include <exception>
 #include "AbstractException.h"
 
-namespace Cardinal::Exception {
-    class InvalidMessage: public AbstractException {
-        public:
-        InvalidMessage() : AbstractException("The message provided was invalid.") {};
+namespace Cardinal::Exception
+{
+    class InvalidMessage : public AbstractException
+    {
+    public:
+        InvalidMessage() : AbstractException("The message provided was invalid."){};
     };
 }
 #endif

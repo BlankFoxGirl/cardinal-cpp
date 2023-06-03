@@ -4,11 +4,14 @@
 #define TCPSBE_H
 using namespace std;
 
-namespace Cardinal {
-    namespace Exception {
-        class TCPSocketBindException: public AbstractException {
-            public:
-            TCPSocketBindException() : AbstractException("Socket binding failed.") {};
+namespace Cardinal
+{
+    namespace Exception
+    {
+        class TCPSocketBindException : public AbstractException
+        {
+        public:
+            TCPSocketBindException() : AbstractException("Socket binding failed."){};
         };
     }
 }

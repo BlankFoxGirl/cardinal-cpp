@@ -8,17 +8,16 @@ using namespace Cardinal::Component::EventMap;
 
 void MemoryEvent::SendOptimisedMessage(
     std::string connectionUUID,
-    Cardinal::Entity::Message& message,
-    Service::MemoryServiceInterface& memoryService,
-    Service::MessageServiceInterface& messageService,
-    std::string queue
-) {
+    Cardinal::Entity::Message &message,
+    Service::MemoryServiceInterface &memoryService,
+    Service::MessageServiceInterface &messageService,
+    std::string queue)
+{
     auto eventEntity = Cardinal::Entity::EventEntity(
-            message.getKey(),
-            message.getPayload(),
-            connectionUUID,
-            "0"
-        );
+        message.getKey(),
+        message.getPayload(),
+        connectionUUID,
+        "0");
 
     memoryService.WriteAllHash(eventEntity.GetQueue(message.getUUID()), eventEntity.Serialize(), 60);
 

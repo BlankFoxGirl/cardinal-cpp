@@ -10,14 +10,16 @@
 
 using namespace Cardinal::Event::Player;
 
-void Movement::UpdatePlayerLocation(std::string Payload) {
+void Movement::UpdatePlayerLocation(std::string Payload)
+{
     this->logService_.Verbose("[Called] Movement::UpdatePlayerLocation", Payload);
 
     this->logService_.Verbose("--Movement::UpdatePlayerLocation Splitting payload.");
     auto result = Movement::GetPlayerLocation(Payload.substr(6, Payload.size()));
     this->logService_.Verbose("--Movement::UpdatePlayerLocation Splitted payload successfully!");
 
-    if (result.size() != Movement::MOVE_PACKET_SIZE) {
+    if (result.size() != Movement::MOVE_PACKET_SIZE)
+    {
         this->logService_.Verbose("--Movement::UpdatePlayerLocation Invalid payload size.");
         return;
     }
@@ -26,16 +28,15 @@ void Movement::UpdatePlayerLocation(std::string Payload) {
     auto packet = Movement::DecodePlayerLocation(result);
     this->logService_.Verbose("--Movement::UpdatePlayerLocation Decoded payload successfully!");
 
-
     this->logService_.Verbose("--Movement::UpdatePlayerLocation Loading player.");
     auto player = Cardinal::Component::User::Player::LoadPlayer(
         packet.connectionUUID,
         this->memoryService_,
-        this->logService_
-    );
+        this->logService_);
     this->logService_.Verbose("--Movement::UpdatePlayerLocation Loaded player successfully!");
 
-    if (!PlayerCanMoveToLocation(packet)) {
+    if (!PlayerCanMoveToLocation(packet))
+    {
         this->logService_.Verbose("--Movement::UpdatePlayerLocation Player cannot move to location.");
         // Send to player movement failure message.
         SendMovementFailureMessage(packet.connectionUUID);
@@ -52,8 +53,7 @@ void Movement::UpdatePlayerLocation(std::string Payload) {
     Cardinal::Component::User::Player::SavePlayer(
         player,
         this->memoryService_,
-        this->logService_
-    );
+        this->logService_);
     this->logService_.Verbose("--Movement::UpdatePlayerLocation Saved player successfully!");
 
     // Send to player success response.
@@ -62,36 +62,41 @@ void Movement::UpdatePlayerLocation(std::string Payload) {
     this->logService_.Verbose("[Closed] Movement::UpdatePlayerLocation");
 }
 
-bool Movement::PlayerCanMoveToLocation(MovementPacket packet) {
+bool Movement::PlayerCanMoveToLocation(MovementPacket packet)
+{
     return true; // Default for now. Need to add collision detection logic.
 }
 
-void Movement::SendMovementFailureMessage(std::string connectionUUID) {
+void Movement::SendMovementFailureMessage(std::string connectionUUID)
+{
     this->memoryService_.Add("queue:" + connectionUUID, "PMOVE|0");
 }
 
-void Movement::SendMovementSuccessMessage(std::string connectionUUID) {
+void Movement::SendMovementSuccessMessage(std::string connectionUUID)
+{
     this->memoryService_.Add("queue:" + connectionUUID, "PMOVE|1");
 }
 
-void Movement::BroadcastLocationUpdate(std::string uuid, std::string Payload) {
+void Movement::BroadcastLocationUpdate(std::string uuid, std::string Payload)
+{
     Cardinal::Entity::Message message = Cardinal::Entity::Message("SENDALL", Payload);
 
     Cardinal::Component::EventMap::MemoryEvent::SendOptimisedMessage(
         uuid,
         message,
         this->memoryService_,
-        this->messageService_
-    );
+        this->messageService_);
 }
 
-std::vector<std::string> Movement::GetPlayerLocation(std::string Payload) {
+std::vector<std::string> Movement::GetPlayerLocation(std::string Payload)
+{
     this->logService_.Verbose("[Called] Movement::GetPlayerLocation", Payload);
     // Expected payload: "x,y,z,rx,ry,rz,mapId,instanceId,connectionUUID"
     return Cardinal::Global::Utility::Split(Payload, Movement::MOVE_PACKET_DELIMITER);
 }
 
-MovementPacket Movement::DecodePlayerLocation(std::vector<std::string> Payload) {
+MovementPacket Movement::DecodePlayerLocation(std::vector<std::string> Payload)
+{
     this->logService_.Verbose("[Called] Movement::DecodePlayerLocation");
 
     MovementPacket packet;
