@@ -2,8 +2,10 @@
 #define CARDINAL_GLOBAL_PHYSICS_QUATERNION_HPP
 
 #include "Vector3.hpp"
-namespace Cardinal::Global::Physics {
-    struct Quaternion {
+namespace Cardinal::Global::Physics
+{
+    struct Quaternion
+    {
         int x;
         int y;
         int z;
@@ -11,26 +13,30 @@ namespace Cardinal::Global::Physics {
 
         Quaternion() = default;
 
-        Quaternion(int x, int y, int z, int w) {
+        Quaternion(int x, int y, int z, int w)
+        {
             this->x = x;
             this->y = y;
             this->z = z;
             this->w = w;
         }
 
-        static Quaternion FromEuler(float x, float y, float z) {
+        static Quaternion FromEuler(float x, float y, float z)
+        {
             auto V1 = Vector3(x, y, z);
 
             return FromEuler(V1);
         }
 
-        static Quaternion FromEulerString(std::string euler) {
+        static Quaternion FromEulerString(std::string euler)
+        {
             auto V1 = Vector3::FromString(euler);
 
             return FromEuler(V1);
         }
 
-        static Quaternion FromEuler(Vector3 euler) {
+        static Quaternion FromEuler(Vector3 euler)
+        {
             float x = euler.x;
             float y = euler.y;
             float z = euler.z;
@@ -51,25 +57,28 @@ namespace Cardinal::Global::Physics {
             return returnQuaternion;
         }
 
-        Vector3 ToEuler() {
-            float sqw = w*w;
-            float sqx = x*x;
-            float sqy = y*y;
-            float sqz = z*z;
+        Vector3 ToEuler()
+        {
+            float sqw = w * w;
+            float sqx = x * x;
+            float sqy = y * y;
+            float sqz = z * z;
 
             float unit = sqx + sqy + sqz + sqw;
-            float test = x*y + z*w;
+            float test = x * y + z * w;
 
             Vector3 returnVector;
 
-            if (test > 0.499f * unit) {
+            if (test > 0.499f * unit)
+            {
                 returnVector.y = 2.0f * atan2f(x, w);
                 returnVector.x = M_PI / 2.0f;
                 returnVector.z = 0.0f;
                 return returnVector;
             }
 
-            if (test < -0.499f * unit) {
+            if (test < -0.499f * unit)
+            {
                 returnVector.y = -2.0f * atan2f(x, w);
                 returnVector.x = -M_PI / 2.0f;
                 returnVector.z = 0.0f;
@@ -83,13 +92,15 @@ namespace Cardinal::Global::Physics {
             return returnVector;
         }
 
-        std::string ToEulerString() {
+        std::string ToEulerString()
+        {
             Vector3 euler = ToEuler();
 
             return euler.ToString();
         }
 
-        bool IsLookingAt(Vector3 target) {
+        bool IsLookingAt(Vector3 target)
+        {
             Vector3 forward = Vector3::Forward();
             Vector3 direction = target - forward;
 
@@ -107,17 +118,20 @@ namespace Cardinal::Global::Physics {
             return forwardVector.DistanceFrom(direction) < 0.1f;
         }
 
-        static Quaternion Slerp(Quaternion q1, Quaternion q2, float t) {
+        static Quaternion Slerp(Quaternion q1, Quaternion q2, float t)
+        {
             float cosHalfTheta = q1.w * q2.w + q1.x * q2.x + q1.y * q2.y + q1.z * q2.z;
 
-            if (abs(cosHalfTheta) >= 1.0f) {
+            if (abs(cosHalfTheta) >= 1.0f)
+            {
                 return q1;
             }
 
             float halfTheta = acosf(cosHalfTheta);
             float sinHalfTheta = sqrtf(1.0f - cosHalfTheta * cosHalfTheta);
 
-            if (fabsf(sinHalfTheta) < 0.001f) {
+            if (fabsf(sinHalfTheta) < 0.001f)
+            {
                 Quaternion returnQuaternion;
                 returnQuaternion.w = (q1.w * 0.5f + q2.w * 0.5f);
                 returnQuaternion.x = (q1.x * 0.5f + q2.x * 0.5f);
@@ -137,17 +151,20 @@ namespace Cardinal::Global::Physics {
             return returnQuaternion;
         }
 
-        static Quaternion Lerp(Quaternion q1, Quaternion q2, float t) {
+        static Quaternion Lerp(Quaternion q1, Quaternion q2, float t)
+        {
             float cosHalfTheta = q1.w * q2.w + q1.x * q2.x + q1.y * q2.y + q1.z * q2.z;
 
-            if (abs(cosHalfTheta) >= 1.0f) {
+            if (abs(cosHalfTheta) >= 1.0f)
+            {
                 return q1;
             }
 
             float halfTheta = acosf(cosHalfTheta);
             float sinHalfTheta = sqrtf(1.0f - cosHalfTheta * cosHalfTheta);
 
-            if (fabsf(sinHalfTheta) < 0.001f) {
+            if (fabsf(sinHalfTheta) < 0.001f)
+            {
                 Quaternion returnQuaternion;
                 returnQuaternion.w = (q1.w * 0.5f + q2.w * 0.5f);
                 returnQuaternion.x = (q1.x * 0.5f + q2.x * 0.5f);
@@ -167,7 +184,8 @@ namespace Cardinal::Global::Physics {
             return returnQuaternion;
         }
 
-        static Quaternion FromToRotation(Vector3 from, Vector3 to) {
+        static Quaternion FromToRotation(Vector3 from, Vector3 to)
+        {
             float dot = from.Dot(to);
             float w = sqrtf(from.LengthSquared() * to.LengthSquared()) + dot;
 

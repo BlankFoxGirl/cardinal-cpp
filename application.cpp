@@ -6,9 +6,8 @@
 #include "Cardinal/Event/Player/Movement.hpp"
 #include "Cardinal/Component/EventMap/EventMap.hpp"
 
-namespace di = boost::di;
-
-int main() {
+int main()
+{
     // Register event.
     Cardinal::Component::EventMap::EventMap::Register<Cardinal::Event::TestEvent>();
     Cardinal::Component::EventMap::EventMap::Register<Cardinal::Event::Player::Movement>();
@@ -21,4 +20,3 @@ int main() {
     // Cardinal::Core::Start(di);
     // cardinalFramework->Init(); // Start framework.
 }
-

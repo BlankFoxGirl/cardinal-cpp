@@ -28,10 +28,11 @@ using namespace std;
 
 namespace Cardinal::Service::Communication
 {
-    class TCPClient: public CommunicationServiceInterface
+    class TCPClient : public CommunicationServiceInterface
     {
     public:
-        explicit TCPClient(Cardinal::Service::LogServiceInterface& s): logService_(s) {
+        explicit TCPClient(Cardinal::Service::LogServiceInterface &s) : logService_(s)
+        {
             this->logService_.Verbose("Starting TCPListenerService");
         }
 
@@ -53,7 +54,7 @@ namespace Cardinal::Service::Communication
         }
 
     private:
-        Cardinal::Service::LogServiceInterface& logService_;
+        Cardinal::Service::LogServiceInterface &logService_;
         u_int32_t Port;
         u_int32_t Address;
         sockaddr_in clientaddr;

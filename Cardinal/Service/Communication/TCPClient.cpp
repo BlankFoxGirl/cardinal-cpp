@@ -55,8 +55,8 @@ void TCPClient::Bind(string port, string address)
 
     // Specified Address!
     this->logService_.Verbose("--TCPClient::Bind Convert Str to Const Char*");
-    const char* addressChar = address.c_str();
-    
+    const char *addressChar = address.c_str();
+
     this->logService_.Verbose("--TCPClient::Bind Set Address");
     inet_pton(AF_INET, addressChar, &this->Address);
     this->logService_.Verbose("--TCPClient::Bind Complete");
@@ -160,14 +160,14 @@ void TCPClient::Accept()
 void *TCPClient::Connection(void *args)
 {
     // Map args to tuple
-    std::tuple<TCPClient*, req*> arg = *reinterpret_cast<std::tuple<TCPClient*, req*>*>(args);
+    std::tuple<TCPClient *, req *> arg = *reinterpret_cast<std::tuple<TCPClient *, req *> *>(args);
 
     // Extract first element of tuple args
     auto t = std::get<0>(arg);
 
     // Extract second element of tuple args
     auto c = std::get<1>(arg);
-    reinterpret_cast<TCPClient*>(t)->CallCallbackByName("OnConnection", c);
+    reinterpret_cast<TCPClient *>(t)->CallCallbackByName("OnConnection", c);
 
     return c;
 }
@@ -177,11 +177,14 @@ void TCPClient::CallCallbackByName(std::string CallbackName, void *args)
     this->logService_.Verbose("[Called] TCPClient::CallCallbackByName");
     // 1. Get the callback from this->Callbacks
     auto callback = this->Callbacks.find(CallbackName);
-    try {
+    try
+    {
         this->logService_.Verbose("Calling callback: " + CallbackName);
         // 2. Call the callback
         callback->second(args);
-    } catch (std::exception &e) {
+    }
+    catch (std::exception &e)
+    {
         this->logService_.Error("Error calling callback: " + CallbackName, e.what());
     }
 

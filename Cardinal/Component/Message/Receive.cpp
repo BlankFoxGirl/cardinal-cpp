@@ -8,21 +8,24 @@
 
 using namespace Cardinal::Component::Message;
 
-Cardinal::Entity::Message Receive::SetMessageContext(Cardinal::Entity::Message message) {
+Cardinal::Entity::Message Receive::SetMessageContext(Cardinal::Entity::Message message)
+{
     this->logService.Verbose("[Called] Cardinal::Component::Message::Receive::SetMessageContext");
     this->message = message;
     this->logService.Verbose("[Closed] Cardinal::Component::Message::Receive::SetMessageContext");
     return this->message;
 }
 
-Cardinal::Entity::Message Receive::SetMessageContext(std::string message) {
+Cardinal::Entity::Message Receive::SetMessageContext(std::string message)
+{
     this->logService.Verbose("[Called] Cardinal::Component::Message::Receive::SetMessageContext");
     this->message = Cardinal::Entity::Message(message);
     this->logService.Verbose("[Closed] Cardinal::Component::Message::Receive::SetMessageContext");
     return this->message;
 }
 
-int Receive::operator()(Cardinal::Entity::Message message) {
+int Receive::operator()(Cardinal::Entity::Message message)
+{
     this->logService.Verbose("[Called] Cardinal::Component::Message::Receive::invoke");
     this->logService.Debug("Received message: " + message.getPayload());
     this->SetMessageContext(message);
@@ -31,16 +34,20 @@ int Receive::operator()(Cardinal::Entity::Message message) {
     return 0;
 };
 
-void Receive::InvokeEventMap() {
+void Receive::InvokeEventMap()
+{
     this->logService.Verbose("[Called] Cardinal::Component::Message::Receive::InvokeEventMap");
 
-    try {
+    try
+    {
         this->logService.Verbose("--Cardinal::Component::Message::Receive::InvokeEventMap instantiating event map component.");
         auto eventMap = Cardinal::Component::EventMap::EventMap::Create(this->logService, this->messageService, this->memoryService);
         this->logService.Verbose("--Cardinal::Component::Message::Receive::InvokeEventMap Invoking event map component.");
         eventMap->Invoke(this->message);
         this->logService.Verbose("--Cardinal::Component::Message::Receive::InvokeEventMap done.");
-    } catch (std::exception& e) {
+    }
+    catch (std::exception &e)
+    {
         this->logService.Error("--Cardinal::Component::Message::Receive::InvokeEventMap", "Failed to execute event.");
     }
 

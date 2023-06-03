@@ -4,11 +4,14 @@
 #define EPNWE_H
 using namespace std;
 
-namespace Cardinal {
-    namespace Exception {
-        class EntityPropertyNotWritable: public AbstractException {
-            public:
-            EntityPropertyNotWritable() : AbstractException("The entity property is not writable.") {};
+namespace Cardinal
+{
+    namespace Exception
+    {
+        class EntityPropertyNotWritable : public AbstractException
+        {
+        public:
+            EntityPropertyNotWritable() : AbstractException("The entity property is not writable."){};
         };
     }
 }
