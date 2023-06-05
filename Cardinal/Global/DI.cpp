@@ -27,4 +27,23 @@ void Cardinal::Global::DI::Init()
     );
 
     auto cardinal = injector.create<T>();
+    cardinal.Init(*this);
+}
+
+Cardinal::Factory::AbstractFactory* Cardinal::Global::DI::GetFactory()
+{
+    auto injector = boost::di::make_injector(
+        boost::di::bind<Cardinal::Service::LogServiceInterface>().to<Cardinal::Service::Log::LogClient>(),
+        boost::di::bind<Cardinal::Service::CommunicationServiceInterface>().to<Cardinal::Service::Communication::TCPClient>(),
+        boost::di::bind<Cardinal::Service::MemoryServiceInterface>().to<Cardinal::Service::Memory::RedisCacheClient>(),
+        boost::di::bind<Cardinal::Service::MessageServiceInterface>().to<Cardinal::Service::Message::MessageClient>()
+        // boost::di::bind<StorageServiceInterface>().to<StorageService>()
+    );
+
+    if (this->factory == nullptr) {
+        auto factory = injector.create<Cardinal::Factory::AbstractFactory>();
+        this->factory = &factory;
+    }
+
+    return this->factory;
 }

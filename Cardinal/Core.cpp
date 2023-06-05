@@ -15,8 +15,10 @@
 
 using namespace Cardinal;
 
-void Core::Init()
+void Core::Init(Cardinal::Global::DI &di)
 {
+    this->diContainer = &di; // Set diContainer.
+
     this->SetVerboseMode();
     this->LoadEnvironment();
     this->SetLogEnvironment();
@@ -37,6 +39,14 @@ void Core::Init()
     }
 
     this->StartLoop();
+}
+
+void Core::CreateFactory()
+{
+    this->logService_.Verbose("Running CreateFactory");
+    this->logService_.Debug("Creating factory...");
+    this->factory = this->diContainer->GetFactory();
+    this->logService_.Debug("Factory created.");
 }
 
 void Core::SetDebugMode()

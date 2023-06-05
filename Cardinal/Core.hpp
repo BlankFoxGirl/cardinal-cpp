@@ -1,6 +1,7 @@
 #ifndef CARDINAL_CORE_H
 #define CARDINAL_CORE_H
 
+#include "Cardinal/Factory/AbstractFactory.hpp"
 #include "Exception/Exceptions.h"
 #include "Service/LogService.hpp"
 #include "Service/MemoryService.hpp"
@@ -9,6 +10,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "Cardinal/Global/DI.hpp"
 
 namespace Cardinal
 {
@@ -25,16 +27,21 @@ namespace Cardinal
                                                                     communicationService_(s3)
         // userService_(s4)
         {
-            this->Init();
+            // this->Init();
             // Do nothing.
         }
 
+        void Init(Cardinal::Global::DI &di);
+
     private:
-        void Init();
         Cardinal::Service::LogServiceInterface &logService_;
         Cardinal::Service::MessageServiceInterface &messageService_;
         Cardinal::Service::MemoryServiceInterface &memoryService_;
         Cardinal::Service::CommunicationServiceInterface &communicationService_;
+
+        Cardinal::Global::DI *diContainer = nullptr;
+
+        Cardinal::Factory::AbstractFactory *factory = nullptr;
 
         bool Active = false;
         bool dryRun = false;
@@ -75,6 +82,8 @@ namespace Cardinal
         void StartMessageService();
 
         void StartMemoryService();
+
+        void CreateFactory();
 
         void Loop();
 
