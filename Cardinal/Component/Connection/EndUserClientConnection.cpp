@@ -136,6 +136,7 @@ std::string EndUserClientConnection::HandleReadingFromClient(std::vector<char> &
 void EndUserClientConnection::InboundMessageHandler(std::string message)
 {
     this->logService_.Verbose("[Called] EndUserClientConnection::InboundMessageHandler");
+    // ToDo: Add Decryption Layer. https://docs.pocoproject.org/current/Poco.Crypto.Cipher.html#143
     // ToDo: Add DTO Translation layer.
     if (message.find("!#") == std::string::npos)
     {
@@ -170,7 +171,7 @@ void EndUserClientConnection::InboundMessageHandler(std::string message)
 
 void EndUserClientConnection::HandleWritingToClient()
 {
-    // Do nothing.
+    // ToDo: This will be where we call our encrypt message. https://docs.pocoproject.org/current/Poco.Crypto.Cipher.html#143
 }
 
 std::string EndUserClientConnection::GetMessage()

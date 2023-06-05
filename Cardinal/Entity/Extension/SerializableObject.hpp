@@ -1,7 +1,6 @@
 #ifndef CARDINAL_ENTITY_EXTENSION_SERIALIZABLEOBJECT_HPP
 #define CARDINAL_ENTITY_EXTENSION_SERIALIZABLEOBJECT_HPP
 #include <vector>
-#include <map>
 #include <string>
 
 namespace Cardinal::Entity::Extension {
