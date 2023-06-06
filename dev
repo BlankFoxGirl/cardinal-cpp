@@ -151,7 +151,7 @@ then
         rm -rf "$CWD/build/*"
     fi
 
-    cd "$CWD/build" && cmake .. && make
+    cd "$CWD/build" && export CXX=/usr/bin/clang++ && cmake .. && make
 
     if [[ ! -f "$CWD/build/bin/libredis++.so.1" ]]
     then

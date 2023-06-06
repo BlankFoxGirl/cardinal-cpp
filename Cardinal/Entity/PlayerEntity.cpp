@@ -18,6 +18,10 @@ std::string PlayerEntity::SetActorName(std::string name) {
     return this->actor.name;
 }
 
+void PlayerEntity::SetActorInGame(bool inGame) {
+    this->actor.inGame = inGame;
+}
+
 Cardinal::Entity::PlayerActor PlayerEntity::GetActor() {
     return this->actor;
 }

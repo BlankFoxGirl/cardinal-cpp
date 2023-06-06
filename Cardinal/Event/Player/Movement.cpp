@@ -21,6 +21,7 @@ void Movement::UpdatePlayerLocation(std::string Payload)
     if (result.size() != Movement::MOVE_PACKET_SIZE)
     {
         this->logService_.Verbose("--Movement::UpdatePlayerLocation Invalid payload size.");
+        SendMovementFailureMessage(result[result.size() - 1]); // Last index is connectionUUID.
         return;
     }
 

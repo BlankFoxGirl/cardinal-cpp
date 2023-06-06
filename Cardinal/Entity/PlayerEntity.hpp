@@ -13,6 +13,7 @@ namespace Cardinal::Entity {
         Quaternion rotation;
         int mapId;
         int instanceId;
+        bool inGame;
     };
 
     //  ToDo: Extract into seperate entity for items.
@@ -38,6 +39,7 @@ namespace Cardinal::Entity {
 
             std::string GetActorName();
             std::string SetActorName(std::string name);
+            void SetActorInGame(bool inGame);
             Vector3 GetActorPosition();
             Vector3 SetActorPosition(Vector3 position);
             Quaternion GetActorRotation();
@@ -68,16 +70,18 @@ namespace Cardinal::Entity {
             static PlayerEntity FromMemory(std::vector<std::pair<std::string, std::string>> serializedPlayer) {
                 PlayerEntity player;
                 std::vector<std::pair<std::string, std::string>>::iterator iter = serializedPlayer.begin();
-                for (iter; iter < serializedPlayer.end(); iter++) {
+                for ( ; iter < serializedPlayer.end(); iter++) {
                     std::pair<std::string, std::string> row = *iter;
                     std::string key = row.first;
                     std::string value = row.second;
 
-                    if (key.compare("name")) {
+                    if (key.compare("name") == 0) {
                         player.SetActorName(value);
-                    } else if (key.compare("position")) {
+                    } else if (key.compare("inGame") == 0) {
+                        player.SetActorInGame(value.compare("true") == 0);
+                    } else if (key.compare("position") == 0) {
                         player.SetActorPosition(Vector3::FromString(value));
-                    } else if (key.compare("rotation")) {
+                    } else if (key.compare("rotation") == 0) {
                         player.SetActorRotation(Quaternion::FromEulerString(value));
                     }
                 }
