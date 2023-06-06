@@ -15,14 +15,14 @@ A C++ Rewrite of the original Cardinal Core for improved performance.
 1. Run command `./dev run`
 
 ### Additional Commands:
-`./dev ninja` - Cleans the build directory and refreshes CMakeLists for PowerTech C++ VSCode Extension.
-`./dev clean` - Cleans the build directory.
-`./dev down` - Docker Compose wrapper command which tears down the DC Project.
-`./dev up` - Docker Compose wrapper command which instantiates the DC Project.
-`./dev install_modules` - Downloads dependency repos into the vendor file. Currently does not support downloading boost::di.
-`./dev install` - Alias of install_modules, see above.
-`./dev build` - Builds all dependencies if not previously built. Compiles cardinal-server binary file.
-`./dev run` - Runs the build command, and then executes the _~/build/bin/cardinal-server_ binary file.
+- `./dev ninja` Cleans the build directory and refreshes CMakeLists for PowerTech C++ VSCode Extension.
+- `./dev clean` Cleans the build directory.
+- `./dev down` Docker Compose wrapper command which tears down the DC Project.
+- `./dev up` Docker Compose wrapper command which instantiates the DC Project.
+- `./dev install_modules` Downloads dependency repos into the vendor file. Currently does not support downloading boost::di.
+- `./dev install` Alias of install_modules, see above.
+- `./dev build` Builds all dependencies if not previously built. Compiles cardinal-server binary file.
+- `./dev run` Runs the build command, and then executes the _~/build/bin/cardinal-server_ binary file.
 
 ## Dependencies:
 - Cardinal uses Redis++ which has a library dependency for Hiredis, you must install hiredis before you can build Cardinal or Redis++. [Hiredis Official Repo](https://github.com/redis/hiredis)
