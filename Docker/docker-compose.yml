@@ -55,4 +55,5 @@ services:
         condition: service_completed_successfully
     ports:
       - '6379:6379'
-    command: redis-server --save 20 1 --loglevel verbose --protected-mode no
+      - '8001:8001'
+    # command: redis-server --save 20 1 --loglevel verbose --protected-mode no

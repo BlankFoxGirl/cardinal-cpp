@@ -36,6 +36,70 @@ namespace Cardinal::Global
 
             return result;
         }
+
+        static std::string Join(const std::vector<std::string> &str, std::string delimiter)
+        {
+            if (str.empty())
+            {
+                return "";
+            }
+
+            std::string result;
+
+            for (auto &s : str)
+            {
+                result += s + delimiter;
+            }
+
+            return result.substr(0, result.length() - delimiter.length());
+        }
+
+        static std::string Escape(const std::string &str)
+        {
+            std::string result;
+
+            for (auto &c : str)
+            {
+                switch (c)
+                {
+                case '\\':
+                    result += "\\\\";
+                    break;
+                case '\n':
+                    result += "\\n";
+                    break;
+                case '\r':
+                    result += "\\r";
+                    break;
+                case '\t':
+                    result += "\\t";
+                    break;
+                case '\b':
+                    result += "\\b";
+                    break;
+                case '\f':
+                    result += "\\f";
+                    break;
+                case '\"':
+                    result += "\\\"";
+                    break;
+                case '@':
+                    result += "\\@";
+                    break;
+                case '.':
+                    result += "\\.";
+                    break;
+                case '\'':
+                    result += "\\\'";
+                    break;
+                default:
+                    result += c;
+                    break;
+                }
+            }
+
+            return result;
+        }
     };
 }
 
