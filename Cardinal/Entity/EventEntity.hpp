@@ -42,7 +42,7 @@ namespace Cardinal::Entity {
             }
 
             std::string GetQueue(std::string UUID) {
-                return "event:" + UUID;
+                return this->GetKey() + UUID;
             }
 
         private:

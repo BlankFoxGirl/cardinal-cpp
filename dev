@@ -1,5 +1,6 @@
 #!/bin/bash
 COMPOSE='docker-compose -p CardinalCPP -f Docker/docker-compose.yml'
+CWD=$(pwd)
 
 if [[ -z "$1" ]]
 then
@@ -162,6 +163,28 @@ then
     ./dev build
 
     ".$CWD/build/bin/cardinal-server"
+elif [[ "$1" = "test" ]]
+then
+    cd "$CWD/UnitTests/build" && rm -rf * && cmake .. && make && cd "$CWD"
+
+    tput clear;
+
+    RES=$(./UnitTests/build/TEST_Runner 2>&1)
+
+    echo "$RES"
+
+    if [[ "$RES" == *"FAILURE"* ]]
+    then
+        echo "Tests failed."
+        exit 1
+    elif [[ "$RES" == *"No such"* ]]
+    then
+        echo "Tests failed."
+        exit 1
+    else
+        echo "All Tests passed successfully."
+        exit 0
+    fi
 elif [[ "$1" = "install" ]]
 then
     install_modules

@@ -5,3 +5,5 @@ build/**
 .vscode
 .cache
 !vendor/boost/**
+UnitTests/build/**
+!UnitTests/build/empty
