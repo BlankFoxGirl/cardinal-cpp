@@ -23,6 +23,7 @@ A C++ Rewrite of the original Cardinal Core for improved performance.
 `./dev install` - Alias of install_modules, see above.
 `./dev build` - Builds all dependencies if not previously built. Compiles cardinal-server binary file.
 `./dev run` - Runs the build command, and then executes the _~/build/bin/cardinal-server_ binary file.
+`./dev test` - Runs the UnitTest suite based on UnitTest-CPP.
 
 ## Dependencies:
 - Cardinal uses Redis++ which has a library dependency for Hiredis, you must install hiredis before you can build Cardinal or Redis++. [Hiredis Official Repo](https://github.com/redis/hiredis)
