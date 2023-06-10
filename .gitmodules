@@ -10,3 +10,6 @@
 [submodule "vendor/sewenew/redis-plus-plus"]
 	path = vendor/sewenew/redis-plus-plus
 	url = https://github.com/sarahjabado/redis-plus-plus.git
+[submodule "vendor/unittest-cpp"]
+	path = vendor/unittest-cpp
+	url = https://github.com/unittest-cpp/unittest-cpp.git
