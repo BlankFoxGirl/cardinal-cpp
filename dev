@@ -167,8 +167,6 @@ elif [[ "$1" = "test" ]]
 then
     cd "$CWD/UnitTests/build" && rm -rf * && cmake .. && make && cd "$CWD"
 
-    tput clear;
-
     RES=$(./UnitTests/build/TEST_Runner 2>&1)
 
     echo "$RES"
