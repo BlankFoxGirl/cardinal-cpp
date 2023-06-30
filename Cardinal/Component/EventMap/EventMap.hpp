@@ -4,6 +4,7 @@
 #include <map>
 #include <iostream>
 #include <memory>
+#include "Cardinal/Component/Event/Registry.hpp"
 #include "Cardinal/Exception/Exceptions.h"
 #include "Cardinal/Event/AbstractEvent.hpp"
 #include "Cardinal/Service/MessageService.hpp"
@@ -37,13 +38,12 @@ namespace Cardinal::Component::EventMap
 
         void Invoke(Cardinal::Entity::Message message);
 
+        /// @deprecated use Cardinal::Component::Event::Registry::Register instead.
         template <typename T>
         static void Register()
         {
-            EventMap::events.insert(
-                pair<std::string, std::map<std::string, FactoryType>::mapped_type>(
-                    (std::string)T::GetEventKey(),
-                    (FactoryType)T::Create));
+            // Alias to new method.
+            Cardinal::Component::Event::Registry::Register<T>();
         }
 
         static std::unique_ptr<EventMap> Create(
@@ -64,21 +64,12 @@ namespace Cardinal::Component::EventMap
         Cardinal::Service::MessageServiceInterface &messageService_;
         Cardinal::Service::MemoryServiceInterface &memoryService_;
         // Cardinal::Service::StorageServiceInterface& storageService_;
-        static eventObject events;
 
         void RetrieveAndInvokeEventObject(string EventName, string Payload);
 
         FactoryType GetEventObject(string eventName)
         {
-            try
-            {
-                auto receivedEventObject = events.at(eventName);
-                return receivedEventObject;
-            }
-            catch (std::exception &e)
-            {
-                throw Cardinal::Exception::InvalidOrMissingEvent();
-            }
+            return Cardinal::Component::Event::Registry::Query(eventName);
         }
     };
 }

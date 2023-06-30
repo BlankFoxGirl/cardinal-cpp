@@ -36,6 +36,18 @@ namespace Cardinal::Global
 
             return result;
         }
+
+        static std::string CharToString(char value)
+        {
+            std::string asString = "";
+            asString += value;
+            return asString;
+        }
+
+        static int CharToInt(char value)
+        {
+            return std::stoi(CharToString(value));
+        }
     };
 }
 

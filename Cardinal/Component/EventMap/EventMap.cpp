@@ -27,8 +27,7 @@ void EventMap::Invoke(Cardinal::Entity::Message message)
             "Invalid or missing event " + message.getPayload() + " Channel: " + message.getKey());
 
         this->logService_.Debug(
-            "--Could it be that the event you're calling hasn't been registered? Event: " + message.getKey(),
-            std::to_string(EventMap::events.size()));
+            "--Could it be that the event you're calling hasn't been registered? Event: " + message.getKey());
     }
     catch (Cardinal::Exception::InvalidMessage &e)
     {
@@ -45,7 +44,12 @@ void EventMap::RetrieveAndInvokeEventObject(std::string EventName, std::string P
     try
     {
         this->logService_.Verbose("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject retrieving event from registered events.");
-        auto factory = events.at(EventName)();
+
+        // This is too inefficient.
+        // @todo Maintain a single instance of the factory object, and then clone.
+        // Presently, this calls the Create static factory method which creates an instance that is then cloned.
+        // resulting in two instances of the object being created.
+        auto factory = GetEventObject(EventName)();
         this->logService_.Verbose("--Cardinal::Component::EventMap::RetrieveAndInvokeEventObject cloning event into scope...");
         auto receivedEventObject = factory->Clone(this->logService_, this->messageService_, this->memoryService_);
         // Retrieve message from memory reference if not locked. If locked, lock it to self and then retrieve.
@@ -79,5 +83,3 @@ void EventMap::RetrieveAndInvokeEventObject(std::string EventName, std::string P
     // Factory and Event both deleted here.
     this->logService_.Verbose("[Closed] Cardinal::Component::EventMap::RetrieveAndInvokeEventObject");
 }
-
-eventObject EventMap::events;

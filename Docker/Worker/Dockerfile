@@ -8,4 +8,6 @@ RUN ldconfig
 RUN mkdir /app
 WORKDIR /app
 
+RUN ln -s /app/libcardinal.so /usr/lib/libcardinal.so
+
 CMD sleep 10 && ./cardinal-server

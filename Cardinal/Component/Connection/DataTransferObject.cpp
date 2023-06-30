@@ -1,4 +1,5 @@
 #include "DataTransferObject.hpp"
+#include <iostream>
 
 using namespace Cardinal::Component::Connection;
 
@@ -84,18 +85,24 @@ Cardinal::Entity::Message DataTransferObject::Decode(char *value)
     return this->message;
 }
 
-const char *DataTransferObject::Encode()
+const char *DataTransferObject::Encode() // Something nasty lives in here, it's broken.
 {
     std::string message = this->message.Compile();
+
     if (this->headersToBytes.find(this->message.getKey()) != this->headersToBytes.end())
     {
-        auto replaceValue = (char *)this->headersToBytes[this->message.getKey()];
+        auto replaceValue = (int)this->headersToBytes[this->message.getKey()];
 
-        message = message.replace(
-            (int)message.find(
-                this->message.getKey()),
-            this->message.getKey().length(),
-            (std::string)replaceValue);
+        std::string key = this->message.getKey();
+
+        int start = 0;
+        int end = key.length();
+
+        message.replace(
+            0,
+            end,
+            std::to_string(replaceValue)
+        );
     }
 
     auto response = new char[message.length() + 1];
