@@ -2,6 +2,7 @@ version: '3.9'
 services:
   compile:
     image: sarahjabado/cardinal-compiler:1.0.3
+    command: /app/build.sh build
     volumes:
       - ../:/app
   gameserver:

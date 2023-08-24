@@ -1,6 +1,6 @@
-[submodule "vendor/crashoz/uuid_v4"]
-	path = vendor/crashoz/uuid_v4
-	url = https://github.com/crashoz/uuid_v4.git
+[submodule "vendor/mariusbancila/stduuid"]
+	path = vendor/mariusbancila/stduuid
+	url = https://github.com/mariusbancila/stduuid.git
 [submodule "vendor/google/googletest"]
 	path = vendor/google/googletest
 	url = https://github.com/google/googletest.git
@@ -13,6 +13,6 @@
 [submodule "vendor/unittest-cpp"]
 	path = vendor/unittest-cpp
 	url = https://github.com/unittest-cpp/unittest-cpp.git
-[submodule "vendor/simde"]
-	path = vendor/simde
-	url = https://github.com/simd-everywhere/simde.git
+[submodule "vendor/microsoft/GSL"]
+	path = vendor/microsoft/GSL
+	url = https://github.com/microsoft/GSL.git
