@@ -7,3 +7,4 @@ build/**
 !vendor/boost/**
 UnitTests/build/**
 !UnitTests/build/empty
+.DS_Store

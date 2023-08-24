@@ -1,9 +1,10 @@
 #include <string>
-#include "vendor/crashoz/uuid_v4/uuid_v4.h"
+#include "vendor/mariusbancila/stduuid/include/uuid.h"
 #include "AbstractEntity.h"
 
 using namespace std;
 using namespace Cardinal::Entity;
+using namespace uuids;
 
 
 AbstractEntity::AbstractEntity(){
@@ -45,7 +46,6 @@ std::string AbstractEntity::setUUID(std::string UUID) {
 }
 
 std::string AbstractEntity::generateUUID() {
-    UUIDv4::UUIDGenerator<std::mt19937_64> uuidGenerator;
-    UUIDv4::UUID uuid = uuidGenerator.getUUID();
-    return uuid.str();
+    uuid const entityUUID = uuids::uuid_system_generator{}();
+    return uuids::to_string(entityUUID);
 }
