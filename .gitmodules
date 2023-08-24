@@ -13,3 +13,6 @@
 [submodule "vendor/unittest-cpp"]
 	path = vendor/unittest-cpp
 	url = https://github.com/unittest-cpp/unittest-cpp.git
+[submodule "vendor/simde"]
+	path = vendor/simde
+	url = https://github.com/simd-everywhere/simde.git

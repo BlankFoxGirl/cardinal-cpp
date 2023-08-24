@@ -1,5 +1,5 @@
 #!/bin/bash
-COMPOSE='docker-compose -p CardinalCPP -f Docker/docker-compose.yml'
+COMPOSE='docker-compose -p cardinal-cpp -f Docker/docker-compose.yml'
 CWD=$(pwd)
 
 if [[ -z "$1" ]]
@@ -76,8 +76,8 @@ install_modules () {
     if [[ ! -d "$CWD/vendor" ]]
     then
         mkdir "$CWD/vendor"
-        git submodules init
-        git submodules update
+        git submodule init
+        git submodule update
     fi
     if [[ ! -d "$CWD/vendor/crashoz" ]]
     then
