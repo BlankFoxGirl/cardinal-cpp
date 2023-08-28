@@ -1,25 +1,25 @@
 #include <string>
-#include "MessageClient.hpp"
+#include "RedisMessageClient.hpp"
 #include "Cardinal/Entity/Message.hpp"
 #include <iostream>
 
 using namespace Cardinal::Service::Message;
 
-void MessageClient::Dispatch(Cardinal::Entity::Message message)
+void RedisMessageClient::Dispatch(Cardinal::Entity::Message message)
 {
     // Send payload to producer.
     std::string payload = message.Compile();
-    MessageClient::redis.publish(Cardinal::Global::Queue::DEFAULT, payload);
+    RedisMessageClient::redis.publish(Cardinal::Global::Queue::DEFAULT, payload);
 }
 
-void MessageClient::Dispatch(Cardinal::Entity::Message message, std::string queue)
+void RedisMessageClient::Dispatch(Cardinal::Entity::Message message, std::string queue)
 {
     // Send payload to producer.
     std::string payload = message.Compile();
-    MessageClient::redis.publish(queue, payload);
+    RedisMessageClient::redis.publish(queue, payload);
 }
 
-void MessageClient::Subscribe(Cardinal::Service::Queue queue)
+void RedisMessageClient::Subscribe(Cardinal::Service::Queue queue)
 {
     // Connect to consumer, subscribe to queue, callback triggers when new message arrives.
     ::MessageSubscribers = this->redis.subscriber();
@@ -33,43 +33,43 @@ void MessageClient::Subscribe(Cardinal::Service::Queue queue)
     return;
 }
 
-void *MessageClient::Consume(Cardinal::Service::Queue queue)
+void *RedisMessageClient::Consume(Cardinal::Service::Queue queue)
 {
     this->Subscribe(queue);
     // ToDo: Still need to resolve the issue of subscribers being killed when this method ends.
     return &this->subscriber;
 }
 
-void *MessageClient::SubscribeAndConsume(Cardinal::Service::Queue queue)
+void *RedisMessageClient::SubscribeAndConsume(Cardinal::Service::Queue queue)
 {
     // Connect to consumer, subscribe to queue, callback triggers when new message arrives.
     return this->Consume(queue);
 }
 
-void MessageClient::Connect(std::string ConnectUrl)
+void RedisMessageClient::Connect(std::string ConnectUrl)
 {
     // Connect to message server.
     this->redis = sw::redis::Redis(ConnectUrl);
 }
 
-void MessageClient::Connect(std::string Hostname, std::string Port, std::string Protocol)
+void RedisMessageClient::Connect(std::string Hostname, std::string Port, std::string Protocol)
 {
     // Connect to message server.
     this->redis = sw::redis::Redis(Protocol + "://" + Hostname + ":" + Port);
 }
 
-void MessageClient::ConsumeAllLoop()
+void RedisMessageClient::ConsumeAllLoop()
 {
-    this->logService->Verbose("[Called] Cardinal::Service::Message::MessageClient::ConsumeAllLoop");
+    this->logService->Verbose("[Called] Cardinal::Service::Message::RedisMessageClient::ConsumeAllLoop");
 
     // ToDo: Use non-blocking.
     this->subscriber->consume();
-    this->logService->Verbose("[Closed] Cardinal::Service::Message::MessageClient::ConsumeAllLoop");
+    this->logService->Verbose("[Closed] Cardinal::Service::Message::RedisMessageClient::ConsumeAllLoop");
 }
 
-void MessageClient::ConsumeAllLoop(void *&subscribers)
+void RedisMessageClient::ConsumeAllLoop(void *&subscribers)
 {
-    this->logService->Verbose("[Called] Cardinal::Service::Message::MessageClient::ConsumeAllLoop with Params");
+    this->logService->Verbose("[Called] Cardinal::Service::Message::RedisMessageClient::ConsumeAllLoop with Params");
     this->logService->Verbose("Casting params to subscriber vector");
     auto subscribersVector = static_cast<std::vector<sw::redis::Subscriber *> *>(subscribers);
     this->logService->Verbose("Done!");
@@ -92,6 +92,6 @@ void MessageClient::ConsumeAllLoop(void *&subscribers)
     delete subscribersVector;
 }
 
-std::vector<sw::redis::Subscriber *> MessageClient::subscribers = std::vector<sw::redis::Subscriber *>();
+std::vector<sw::redis::Subscriber *> RedisMessageClient::subscribers = std::vector<sw::redis::Subscriber *>();
 
 sw::redis::Subscriber MessageSubscribers = sw::redis::Subscriber();

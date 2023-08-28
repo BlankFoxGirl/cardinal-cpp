@@ -4,7 +4,7 @@
 #include "Cardinal/Service/LogService.hpp"
 #include "Cardinal/Service/MessageService.hpp"
 #include "Cardinal/Service/MemoryService.hpp"
-// #include "StorageService.hpp"
+#include "Cardinal/Service/StorageService.hpp"
 #include "Cardinal/Service/CommunicationService.hpp"
 
 #endif

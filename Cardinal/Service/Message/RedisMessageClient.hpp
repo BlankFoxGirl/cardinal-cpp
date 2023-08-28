@@ -1,5 +1,5 @@
-#ifndef CARDINAL_MESSAGECLIENT_H
-#define CARDINAL_MESSAGECLIENT_H
+#ifndef CARDINAL_REDIS_MESSAGE_CLIENT_HPP
+#define CARDINAL_REDIS_MESSAGE_CLIENT_HPP
 #include <string>
 #include <memory>
 #include "Cardinal/Service/MessageService.hpp"
@@ -9,10 +9,10 @@
 extern sw::redis::Subscriber MessageSubscribers;
 namespace Cardinal::Service::Message
 {
-    class MessageClient : public Cardinal::Service::MessageServiceInterface
+    class RedisMessageClient : public Cardinal::Service::MessageServiceInterface
     {
     public:
-        explicit MessageClient(Cardinal::Service::LogServiceInterface *logService) : logService(logService), subscriber(nullptr){};
+        explicit RedisMessageClient(Cardinal::Service::LogServiceInterface *logService) : logService(logService), subscriber(nullptr){};
 
         void Dispatch(Cardinal::Entity::Message message);
         void Dispatch(Cardinal::Entity::Message message, std::string queue = Cardinal::Global::Queue::DEFAULT);
