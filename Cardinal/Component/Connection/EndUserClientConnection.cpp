@@ -38,10 +38,13 @@ void EndUserClientConnection::AcceptConnection(void *args)
     Cardinal::Service::req sock = *((Cardinal::Service::req *)args);
 
     std::vector<char> buf(MAX_BUFFER_SIZE); // you are using C++ not C
+    std::vector<char> empty_buffer(MAX_BUFFER_SIZE); // you are using C++ not C
     int n = 1;
 
     struct pollfd fds[200];
     memset(fds, 0, sizeof(fds));
+
+    std::fill(empty_buffer.begin(), empty_buffer.end(), '\0');
 
     /*************************************************************/
     /* Set up the initial listening socket                       */
@@ -71,6 +74,10 @@ void EndUserClientConnection::AcceptConnection(void *args)
 
             if (buf.size() != 0)
             {
+                if (buf == empty_buffer) {
+                    close(sock.des);
+                    return;
+                }
                 std::string data = this->HandleReadingFromClient(buf);
 
                 this->logService_.Debug("Received data:", data);
